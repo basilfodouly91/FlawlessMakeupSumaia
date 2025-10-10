@@ -1,0 +1,99 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using FlawlessMakeupSumaia.API.Models;
+
+namespace FlawlessMakeupSumaia.API.Data
+{
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+        }
+
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            // Product configuration
+            builder.Entity<Product>(entity =>
+            {
+                entity.HasKey(p => p.Id);
+                entity.Property(p => p.Price).HasColumnType("decimal(18,2)");
+                entity.Property(p => p.SalePrice).HasColumnType("decimal(18,2)");
+                entity.HasOne(p => p.Category)
+                      .WithMany(c => c.Products)
+                      .HasForeignKey(p => p.CategoryId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Category configuration
+            builder.Entity<Category>(entity =>
+            {
+                entity.HasKey(c => c.Id);
+                entity.HasIndex(c => c.Name).IsUnique();
+            });
+
+            // Cart configuration
+            builder.Entity<Cart>(entity =>
+            {
+                entity.HasKey(c => c.Id);
+                entity.HasOne(c => c.User)
+                      .WithOne(u => u.Cart)
+                      .HasForeignKey<Cart>(c => c.UserId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // CartItem configuration
+            builder.Entity<CartItem>(entity =>
+            {
+                entity.HasKey(ci => ci.Id);
+                entity.Property(ci => ci.Price).HasColumnType("decimal(18,2)");
+                entity.HasOne(ci => ci.Cart)
+                      .WithMany(c => c.CartItems)
+                      .HasForeignKey(ci => ci.CartId)
+                      .OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(ci => ci.Product)
+                      .WithMany(p => p.CartItems)
+                      .HasForeignKey(ci => ci.ProductId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Order configuration
+            builder.Entity<Order>(entity =>
+            {
+                entity.HasKey(o => o.Id);
+                entity.Property(o => o.SubTotal).HasColumnType("decimal(18,2)");
+                entity.Property(o => o.Tax).HasColumnType("decimal(18,2)");
+                entity.Property(o => o.ShippingCost).HasColumnType("decimal(18,2)");
+                entity.Property(o => o.TotalAmount).HasColumnType("decimal(18,2)");
+                entity.HasOne(o => o.User)
+                      .WithMany(u => u.Orders)
+                      .HasForeignKey(o => o.UserId)
+                      .OnDelete(DeleteBehavior.Restrict);
+                entity.HasIndex(o => o.OrderNumber).IsUnique();
+            });
+
+            // OrderItem configuration
+            builder.Entity<OrderItem>(entity =>
+            {
+                entity.HasKey(oi => oi.Id);
+                entity.Property(oi => oi.UnitPrice).HasColumnType("decimal(18,2)");
+                entity.HasOne(oi => oi.Order)
+                      .WithMany(o => o.OrderItems)
+                      .HasForeignKey(oi => oi.OrderId)
+                      .OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(oi => oi.Product)
+                      .WithMany(p => p.OrderItems)
+                      .HasForeignKey(oi => oi.ProductId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+        }
+    }
+}

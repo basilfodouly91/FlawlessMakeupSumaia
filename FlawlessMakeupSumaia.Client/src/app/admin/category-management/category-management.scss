@@ -1,0 +1,73 @@
+// Admin Category Management Styles
+
+.modal {
+    z-index: 1050;
+
+    .modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: -1;
+    }
+
+    .modal-dialog {
+        position: relative;
+        z-index: 1;
+        margin: 1.75rem auto;
+    }
+}
+
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(255, 105, 180, 0.2);
+    }
+}
+
+.card-img-top {
+    border-bottom: 2px solid var(--pale-pink);
+}
+
+.btn-group {
+    .btn {
+        &:not(:last-child) {
+            border-right: 1px solid var(--pale-pink);
+        }
+    }
+}
+
+// Form styling
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary-pink);
+    box-shadow: 0 0 0 0.2rem rgba(255, 105, 180, 0.25);
+}
+
+// Modal animations
+.modal.d-block {
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+// Badge styling
+.badge {
+    font-size: 0.7rem;
+
+    &.bg-info {
+        background-color: var(--primary-pink) !important;
+    }
+}

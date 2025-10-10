@@ -1,0 +1,29 @@
+import { Component, signal, OnInit } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { HeaderComponent } from './components/header/header';
+import { CommonModule } from '@angular/common';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [CommonModule, RouterOutlet, HeaderComponent, TranslateModule],
+  templateUrl: './app.html',
+  styleUrl: './app.scss'
+})
+export class App implements OnInit {
+  protected readonly title = signal('FlawlessMakeupSumaia.Client');
+
+  constructor(private translate: TranslateService) {
+    // Set default language to Arabic
+    translate.setDefaultLang('ar');
+    translate.use('ar');
+    // Set RTL direction for Arabic
+    document.documentElement.dir = 'rtl';
+    document.documentElement.lang = 'ar';
+  }
+
+  ngOnInit() {
+    // Initialization logic
+  }
+}

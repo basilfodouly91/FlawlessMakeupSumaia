@@ -1,0 +1,338 @@
+/* You can add global styles to this file, and also import other style files */
+@use 'styles/rtl';
+
+/* RTL Font Support */
+@font-face {
+    font-family: 'Tajawal';
+    src: url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap');
+}
+
+[dir="rtl"] {
+    font-family: 'Tajawal', sans-serif;
+}
+
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+// Pink Theme Color Palette
+:root {
+    --primary-pink: #ff69b4;
+    --light-pink: #ffb6c1;
+    --dark-pink: #c1477c;
+    --accent-pink: #ff1493;
+    --soft-pink: #ffc0cb;
+    --pale-pink: #ffe4e1;
+    --rose-gold: #e8b4b8;
+    --white: #ffffff;
+    --light-gray: #f8f9fa;
+    --gray: #6c757d;
+    --dark-gray: #343a40;
+    --black: #000000;
+}
+
+// Global Styles
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--white);
+    color: var(--dark-gray);
+    line-height: 1.6;
+}
+
+// Typography
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--dark-pink);
+    font-weight: 600;
+}
+
+// Button Styles
+.btn-primary {
+    background-color: var(--primary-pink);
+    border-color: var(--primary-pink);
+    color: var(--white);
+
+    &:hover {
+        background-color: var(--dark-pink);
+        border-color: var(--dark-pink);
+    }
+
+    &:focus {
+        box-shadow: 0 0 0 0.2rem rgba(255, 105, 180, 0.25);
+    }
+}
+
+.btn-outline-primary {
+    color: var(--primary-pink);
+    border-color: var(--primary-pink);
+
+    &:hover {
+        background-color: var(--primary-pink);
+        border-color: var(--primary-pink);
+        color: var(--white);
+    }
+}
+
+.btn-secondary {
+    background-color: var(--light-pink);
+    border-color: var(--light-pink);
+    color: var(--dark-gray);
+
+    &:hover {
+        background-color: var(--soft-pink);
+        border-color: var(--soft-pink);
+    }
+}
+
+// Card Styles
+.card {
+    border: 1px solid var(--pale-pink);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(255, 105, 180, 0.1);
+    transition: all 0.3s ease;
+
+    &:hover {
+        box-shadow: 0 4px 16px rgba(255, 105, 180, 0.2);
+        transform: translateY(-2px);
+    }
+}
+
+// Form Styles
+.form-control {
+    border: 2px solid var(--pale-pink);
+    border-radius: 8px;
+
+    &:focus {
+        border-color: var(--primary-pink);
+        box-shadow: 0 0 0 0.2rem rgba(255, 105, 180, 0.25);
+    }
+}
+
+// Navigation Styles
+.navbar {
+    background-color: var(--white) !important;
+    box-shadow: 0 2px 4px rgba(255, 105, 180, 0.1);
+
+    .navbar-brand {
+        color: var(--primary-pink) !important;
+        font-weight: bold;
+        font-size: 1.5rem;
+    }
+
+    .nav-link {
+        color: var(--dark-gray) !important;
+        font-weight: 500;
+
+        &:hover {
+            color: var(--primary-pink) !important;
+        }
+    }
+}
+
+// Product Card Styles
+.product-card {
+    .card-img-top {
+        height: 250px;
+        object-fit: cover;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .product-price {
+        color: var(--primary-pink);
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    .product-sale-price {
+        color: var(--gray);
+        text-decoration: line-through;
+        font-size: 0.9rem;
+    }
+
+    .sale-badge {
+        background-color: var(--accent-pink);
+        color: var(--white);
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+
+    .sold-out-badge {
+        background-color: var(--gray);
+        color: var(--white);
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+}
+
+// Category Styles
+.category-card {
+    .card-img-top {
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .card-body {
+        background: linear-gradient(135deg, var(--pale-pink), var(--white));
+    }
+}
+
+// Cart Styles
+.cart-item {
+    border-bottom: 1px solid var(--pale-pink);
+    padding: 1rem 0;
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    .cart-item-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .quantity-controls {
+        .btn {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quantity-input {
+            width: 60px;
+            text-align: center;
+            border: 1px solid var(--pale-pink);
+            border-radius: 4px;
+        }
+    }
+}
+
+// Footer Styles
+.footer {
+    background: linear-gradient(135deg, var(--pale-pink), var(--light-pink));
+    color: var(--dark-gray);
+    padding: 2rem 0;
+    margin-top: auto;
+}
+
+// Loading Spinner
+.spinner-pink {
+    color: var(--primary-pink);
+}
+
+// Alert Styles
+.alert-success {
+    background-color: var(--pale-pink);
+    border-color: var(--light-pink);
+    color: var(--dark-pink);
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+// Utility Classes
+.text-pink {
+    color: var(--primary-pink) !important;
+}
+
+.bg-pink {
+    background-color: var(--primary-pink) !important;
+}
+
+.bg-light-pink {
+    background-color: var(--light-pink) !important;
+}
+
+.bg-pale-pink {
+    background-color: var(--pale-pink) !important;
+}
+
+.border-pink {
+    border-color: var(--primary-pink) !important;
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+    .product-card .card-img-top {
+        height: 200px;
+    }
+
+    .category-card .card-img-top {
+        height: 150px;
+    }
+}
+
+// Animation Classes
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+// Custom Scrollbar
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--light-gray);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--light-pink);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-pink);
+}

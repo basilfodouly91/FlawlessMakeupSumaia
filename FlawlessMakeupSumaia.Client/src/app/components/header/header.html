@@ -1,0 +1,122 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+    <div class="container">
+        <!-- Brand -->
+        <a class="navbar-brand d-flex align-items-center" routerLink="/">
+            <div class="brand-logo me-2">
+                <i class="bi bi-heart-fill fs-3 text-pink"></i>
+            </div>
+            <div class="brand-text">
+                <div class="fw-bold text-pink" style="font-size: 1.2rem; line-height: 1;">Flawless Makeup</div>
+                <div class="small text-muted" style="font-size: 0.8rem; line-height: 1;">Sumaia</div>
+            </div>
+        </a>
+
+        <!-- Mobile menu button -->
+        <button class="navbar-toggler" type="button" (click)="toggleMobileMenu()"
+            [attr.aria-expanded]="isMobileMenuOpen" aria-controls="navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navigation -->
+        <div class="collapse navbar-collapse" id="navbarNav" [class.show]="isMobileMenuOpen">
+            <!-- Main Navigation -->
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" routerLink="/" routerLinkActive="active"
+                        [routerLinkActiveOptions]="{exact: true}">
+                        {{ 'HEADER.HOME' | translate }}
+                    </a>
+                </li>
+                <li class="nav-item dropdown" (mouseenter)="showCategoryDropdown = true"
+                    (mouseleave)="showCategoryDropdown = false">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" [class.show]="showCategoryDropdown">
+                        {{ 'HEADER.PRODUCTS' | translate }}
+                    </a>
+                    <ul class="dropdown-menu" [class.show]="showCategoryDropdown">
+                        <li><a class="dropdown-item" routerLink="/products">{{ 'PRODUCTS.ALL_PRODUCTS' | translate
+                                }}</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li *ngFor="let category of categories">
+                            <a class="dropdown-item" [routerLink]="['/category', category.id]">
+                                {{ category.name }}
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" routerLink="/featured">{{ 'HEADER.FEATURED' | translate }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" routerLink="/sale">{{ 'HEADER.SALE' | translate }}</a>
+                </li>
+                <li class="nav-item" *ngIf="isLoggedIn">
+                    <a class="nav-link text-warning" routerLink="/admin">
+                        <i class="bi bi-gear-fill me-1"></i>
+                        {{ 'HEADER.ADMIN' | translate }}
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Search Bar -->
+            <form class="d-flex me-3" (ngSubmit)="onSearch()">
+                <div class="input-group">
+                    <input class="form-control" type="search" [placeholder]="'PRODUCTS.SEARCH' | translate"
+                        [(ngModel)]="searchTerm" name="search">
+                    <button class="btn btn-outline-primary" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>
+
+            <!-- User Actions -->
+            <ul class="navbar-nav">
+                <!-- Language Switcher -->
+                <li class="nav-item">
+                    <app-language-switcher></app-language-switcher>
+                </li>
+
+                <!-- Cart -->
+                <li class="nav-item">
+                    <a class="nav-link position-relative" routerLink="/cart">
+                        <i class="bi bi-bag fs-5"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-pink"
+                            *ngIf="cartItemCount > 0">
+                            {{ cartItemCount }}
+                        </span>
+                    </a>
+                </li>
+
+                <!-- User Menu -->
+                <li class="nav-item dropdown" *ngIf="!isLoggedIn" (mouseenter)="showUserDropdown = true"
+                    (mouseleave)="showUserDropdown = false">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" [class.show]="showUserDropdown">
+                        <i class="bi bi-person fs-5"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" [class.show]="showUserDropdown">
+                        <li><a class="dropdown-item" routerLink="/login">{{ 'HEADER.LOGIN' | translate }}</a></li>
+                    </ul>
+                </li>
+
+                <!-- Logged in user menu -->
+                <li class="nav-item dropdown" *ngIf="isLoggedIn" (mouseenter)="showUserDropdown = true"
+                    (mouseleave)="showUserDropdown = false">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" [class.show]="showUserDropdown">
+                        <i class="bi bi-person-circle fs-5"></i>
+                        <span class="ms-1">{{ currentUser?.firstName }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" [class.show]="showUserDropdown">
+                        <li><a class="dropdown-item" routerLink="/profile">{{ 'USER.PROFILE' | translate }}</a></li>
+                        <li><a class="dropdown-item" routerLink="/orders">{{ 'USER.ORDERS' | translate }}</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="#" (click)="logout()">{{ 'HEADER.LOGOUT' | translate }}</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

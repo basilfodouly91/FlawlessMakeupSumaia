@@ -1,0 +1,28 @@
+namespace FlawlessMakeupSumaia.API.DTOs
+{
+    public class CategoryDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string ImageUrl { get; set; } = string.Empty;
+        public bool IsActive { get; set; }
+        public int DisplayOrder { get; set; }
+        public DateTime DateCreated { get; set; }
+        public int ProductCount { get; set; }
+    }
+
+    public class CreateCategoryDto
+    {
+        public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string ImageUrl { get; set; } = string.Empty;
+        public int DisplayOrder { get; set; }
+    }
+
+    public class UpdateCategoryDto : CreateCategoryDto
+    {
+        public int Id { get; set; }
+        public bool IsActive { get; set; }
+    }
+}

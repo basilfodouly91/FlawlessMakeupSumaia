@@ -1,0 +1,159 @@
+<div class="container py-5" *ngIf="product">
+    <div class="row">
+        <!-- Product Images -->
+        <div class="col-lg-6">
+            <div class="product-images">
+                <img [src]="product.imageUrl || 'https://picsum.photos/600/400?random=' + product.id"
+                    [alt]="product.name" class="img-fluid rounded-3 shadow-lg mb-3">
+
+                <!-- Additional images if available -->
+                <div class="row g-2" *ngIf="product.imageUrls && product.imageUrls.length > 0">
+                    <div class="col-3" *ngFor="let imageUrl of product.imageUrls">
+                        <img [src]="imageUrl" [alt]="product.name" class="img-fluid rounded-2 shadow-sm"
+                            style="cursor: pointer; height: 80px; object-fit: cover;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Details -->
+        <div class="col-lg-6">
+            <div class="product-details">
+                <!-- Breadcrumb -->
+                <nav aria-label="breadcrumb" class="mb-3">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a routerLink="/" class="text-pink">{{
+                                'PRODUCT_DETAIL.HOME_BREADCRUMB' | translate }}</a></li>
+                        <li class="breadcrumb-item"><a [routerLink]="['/category', product.categoryId]"
+                                class="text-pink">{{ product.categoryName }}</a></li>
+                        <li class="breadcrumb-item active">{{ product.name }}</li>
+                    </ol>
+                </nav>
+
+                <!-- Product Info -->
+                <h1 class="text-pink mb-3">{{ product.name }}</h1>
+
+                <div class="mb-3" *ngIf="product.brand">
+                    <span class="badge bg-light-pink text-dark fs-6">{{ product.brand }}</span>
+                </div>
+
+                <!-- Price -->
+                <div class="price-section mb-4">
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="fs-3 fw-bold text-pink">
+                            {{ product.currentPrice | currency:'JOD':'symbol':'1.3-3' }}
+                        </span>
+                        <span class="fs-5 text-muted text-decoration-line-through" *ngIf="product.hasDiscount">
+                            {{ product.price | currency:'JOD':'symbol':'1.3-3' }}
+                        </span>
+                        <span class="badge bg-danger fs-6" *ngIf="product.hasDiscount">
+                            {{ 'PRODUCT_DETAIL.SAVE' | translate }} {{ product.discountPercentage }}%
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Stock Status -->
+                <div class="stock-status mb-4">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-box-seam"></i>
+                        <span [class.text-success]="product.stockQuantity > 10"
+                            [class.text-warning]="product.stockQuantity > 0 && product.stockQuantity <= 10"
+                            [class.text-danger]="product.stockQuantity === 0">
+                            <ng-container *ngIf="product.stockQuantity === 0">{{ 'PRODUCT_DETAIL.OUT_OF_STOCK' |
+                                translate }}</ng-container>
+                            <ng-container *ngIf="product.stockQuantity > 0 && product.stockQuantity <= 10">{{
+                                'PRODUCT_DETAIL.ONLY_LEFT' | translate }} {{ product.stockQuantity }} {{
+                                'PRODUCT_DETAIL.LEFT_IN_STOCK' | translate }}</ng-container>
+                            <ng-container *ngIf="product.stockQuantity > 10">{{ 'PRODUCT_DETAIL.IN_STOCK' | translate
+                                }}</ng-container>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Product Details -->
+                <div class="product-specs mb-4">
+                    <div class="row" *ngIf="product.shade || product.size || product.skinType">
+                        <div class="col-md-4" *ngIf="product.shade">
+                            <strong>{{ 'PRODUCT_DETAIL.SHADE' | translate }}:</strong> {{ product.shade }}
+                        </div>
+                        <div class="col-md-4" *ngIf="product.size">
+                            <strong>{{ 'PRODUCT_DETAIL.SIZE' | translate }}:</strong> {{ product.size }}
+                        </div>
+                        <div class="col-md-4" *ngIf="product.skinType">
+                            <strong>{{ 'PRODUCT_DETAIL.SKIN_TYPE' | translate }}:</strong> {{ product.skinType }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add to Cart -->
+                <div class="add-to-cart mb-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-4">
+                            <label class="form-label">{{ 'PRODUCT_DETAIL.QUANTITY' | translate }}:</label>
+                            <div class="input-group">
+                                <button class="btn btn-outline-secondary" (click)="decreaseQuantity()">
+                                    <i class="bi bi-dash"></i>
+                                </button>
+                                <input type="number" class="form-control text-center" [(ngModel)]="quantity"
+                                    [max]="product.stockQuantity" min="1">
+                                <button class="btn btn-outline-secondary" (click)="increaseQuantity()"
+                                    [disabled]="quantity >= product.stockQuantity">
+                                    <i class="bi bi-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <button class="btn btn-primary btn-lg w-100" (click)="addToCart()"
+                                [disabled]="product.stockQuantity === 0 || isAddingToCart">
+                                <span *ngIf="isAddingToCart" class="spinner-border spinner-border-sm me-2"></span>
+                                <i class="bi bi-bag-plus me-2" *ngIf="!isAddingToCart"></i>
+                                {{ product.stockQuantity === 0 ? ('PRODUCT_DETAIL.SOLD_OUT' | translate) :
+                                ('PRODUCT_DETAIL.ADD_TO_CART' | translate) }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Description -->
+                <div class="product-description">
+                    <h5 class="text-pink">{{ 'PRODUCT_DETAIL.DESCRIPTION' | translate }}</h5>
+                    <p>{{ product.description }}</p>
+
+                    <div *ngIf="product.ingredients">
+                        <h6 class="text-pink mt-4">{{ 'PRODUCT_DETAIL.INGREDIENTS' | translate }}</h6>
+                        <p class="small">{{ product.ingredients }}</p>
+                    </div>
+                </div>
+
+                <!-- Product Badges -->
+                <div class="product-badges mt-4">
+                    <span class="badge bg-success me-2" *ngIf="product.isFeatured">
+                        <i class="bi bi-star me-1"></i>{{ 'PRODUCT_DETAIL.FEATURED' | translate }}
+                    </span>
+                    <span class="badge bg-info me-2" *ngIf="product.isOnSale">
+                        <i class="bi bi-tag me-1"></i>{{ 'PRODUCT_DETAIL.ON_SALE' | translate }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading State -->
+<div class="container py-5" *ngIf="isLoading">
+    <div class="text-center">
+        <div class="spinner-border spinner-pink" role="status">
+            <span class="visually-hidden">{{ 'PRODUCT_DETAIL.LOADING' | translate }}</span>
+        </div>
+    </div>
+</div>
+
+<!-- Not Found -->
+<div class="container py-5" *ngIf="!product && !isLoading">
+    <div class="text-center">
+        <i class="bi bi-exclamation-triangle fs-1 text-muted"></i>
+        <h3 class="text-muted mt-3">{{ 'PRODUCT_DETAIL.NOT_FOUND' | translate }}</h3>
+        <p class="text-muted">{{ 'PRODUCT_DETAIL.NOT_FOUND_MESSAGE' | translate }}</p>
+        <a routerLink="/products" class="btn btn-primary">{{ 'PRODUCT_DETAIL.BROWSE_ALL' | translate }}</a>
+    </div>
+</div>

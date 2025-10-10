@@ -1,0 +1,413 @@
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="text-pink mb-0">
+                    <i class="bi bi-box-seam me-2"></i>
+                    {{ 'ADMIN.PRODUCT_MANAGEMENT' | translate }}
+                </h1>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-success" (click)="openProductModal()">
+                        <i class="bi bi-plus-circle me-1"></i>
+                        {{ 'ADMIN.ADD_PRODUCT' | translate }}
+                    </button>
+                    <button class="btn btn-outline-primary" (click)="refreshProducts()">
+                        <i class="bi bi-arrow-clockwise me-1"></i>
+                        {{ 'ADMIN.REFRESH' | translate }}
+                    </button>
+                    <button class="btn btn-outline-info" (click)="testConnection()">
+                        <i class="bi bi-wifi me-1"></i>
+                        {{ 'ADMIN.TEST_API' | translate }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Debug Info -->
+    <div class="alert alert-info" *ngIf="debugInfo">
+        <strong>{{ 'ADMIN.DEBUG_INFO' | translate }}:</strong> {{ debugInfo }}
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <input type="text" class="form-control" [placeholder]="'ADMIN.SEARCH_PRODUCTS' | translate"
+                [(ngModel)]="searchTerm" (input)="filterProducts()">
+        </div>
+        <div class="col-lg-2 col-md-6 mb-3">
+            <select class="form-select" [(ngModel)]="selectedCategory" (change)="filterProducts()">
+                <option value="">{{ 'ADMIN.ALL_CATEGORIES' | translate }} ({{ categories.length }})</option>
+                <option *ngFor="let category of categories" [value]="category.id">
+                    {{ category.name }}
+                </option>
+            </select>
+        </div>
+        <div class="col-lg-2 col-md-6 mb-3">
+            <select class="form-select" [(ngModel)]="selectedStatus" (change)="filterProducts()">
+                <option value="">{{ 'ADMIN.ALL_STATUS' | translate }}</option>
+                <option value="active">{{ 'ADMIN.ACTIVE' | translate }}</option>
+                <option value="inactive">{{ 'ADMIN.INACTIVE' | translate }}</option>
+                <option value="featured">{{ 'ADMIN.FEATURED' | translate }}</option>
+                <option value="sale">{{ 'ADMIN.SALE' | translate }}</option>
+                <option value="low-stock">{{ 'ADMIN.LOW_STOCK' | translate }}</option>
+                <option value="out-of-stock">{{ 'ADMIN.OUT_OF_STOCK' | translate }}</option>
+            </select>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-secondary" (click)="selectAll()">
+                    {{ 'ADMIN.SELECT_ALL' | translate }}
+                </button>
+                <button class="btn btn-outline-secondary" (click)="clearSelection()">
+                    {{ 'ADMIN.CLEAR' | translate }}
+                </button>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-6 mb-3">
+            <button class="btn btn-warning w-100" (click)="openBulkModal()" [disabled]="selectedProducts.length === 0">
+                {{ 'ADMIN.BULK_ACTIONS' | translate }} ({{ selectedProducts.length }})
+            </button>
+        </div>
+    </div>
+
+    <!-- Products Table -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th width="50">
+                                <input type="checkbox" class="form-check-input" [checked]="isAllSelected()"
+                                    (change)="toggleSelectAll()">
+                            </th>
+                            <th width="80">{{ 'ADMIN.IMAGE' | translate }}</th>
+                            <th>{{ 'ADMIN.NAME' | translate }}</th>
+                            <th>{{ 'ADMIN.CATEGORY' | translate }}</th>
+                            <th>{{ 'ADMIN.PRICE' | translate }}</th>
+                            <th>{{ 'ADMIN.STOCK' | translate }}</th>
+                            <th>{{ 'ADMIN.STATUS' | translate }}</th>
+                            <th width="200">{{ 'ADMIN.ACTIONS' | translate }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let product of filteredProducts" [class.table-warning]="product.stockQuantity < 10"
+                            [class.table-danger]="product.stockQuantity === 0">
+                            <td>
+                                <input type="checkbox" class="form-check-input" [checked]="isSelected(product.id)"
+                                    (change)="toggleSelection(product.id)">
+                            </td>
+                            <td>
+                                <img [src]="product.imageUrl" [alt]="product.name" class="img-thumbnail"
+                                    style="width: 60px; height: 60px; object-fit: cover;">
+                            </td>
+                            <td>
+                                <div>
+                                    <strong>{{ product.name }}</strong>
+                                    <div class="small text-muted">{{ product.brand }}</div>
+                                    <div class="mt-1">
+                                        <span class="badge bg-success me-1" *ngIf="product.isActive">{{ 'ADMIN.ACTIVE' |
+                                            translate }}</span>
+                                        <span class="badge bg-secondary me-1" *ngIf="!product.isActive">{{
+                                            'ADMIN.INACTIVE' | translate }}</span>
+                                        <span class="badge bg-warning me-1" *ngIf="product.isFeatured">{{
+                                            'ADMIN.FEATURED' | translate }}</span>
+                                        <span class="badge bg-info me-1" *ngIf="product.isOnSale">{{ 'ADMIN.SALE' |
+                                            translate }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ product.categoryName }}</td>
+                            <td>
+                                <div>
+                                    <span class="fw-bold">{{ product.price | currency:'JOD':'symbol':'1.3-3' }}</span>
+                                    <div *ngIf="product.salePrice" class="small text-muted">
+                                        Sale: {{ product.salePrice | currency:'JOD':'symbol':'1.3-3' }}
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <input type="number" class="form-control form-control-sm" style="width: 80px;"
+                                        [value]="product.stockQuantity" (blur)="updateStock(product.id, $event)"
+                                        min="0">
+                                    <span class="ms-2 badge" [class.bg-success]="product.stockQuantity > 10"
+                                        [class.bg-warning]="product.stockQuantity > 0 && product.stockQuantity <= 10"
+                                        [class.bg-danger]="product.stockQuantity === 0">
+                                        {{ product.status }}
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="small">
+                                    Created: {{ product.dateCreated | date:'short' }}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="btn-group-vertical btn-group-sm" role="group">
+                                    <button class="btn btn-outline-primary btn-sm" (click)="editProduct(product)">
+                                        <i class="bi bi-pencil"></i> {{ 'ADMIN.EDIT' | translate }}
+                                    </button>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <button class="btn btn-outline-success btn-sm"
+                                            (click)="toggleActive(product.id)" [class.btn-success]="product.isActive"
+                                            [title]="'ADMIN.TOGGLE_ACTIVE' | translate">
+                                            <i class="bi bi-power"></i>
+                                        </button>
+                                        <button class="btn btn-outline-warning btn-sm"
+                                            (click)="toggleFeatured(product.id)"
+                                            [class.btn-warning]="product.isFeatured"
+                                            [title]="'ADMIN.TOGGLE_FEATURED' | translate">
+                                            <i class="bi bi-star"></i>
+                                        </button>
+                                        <button class="btn btn-outline-info btn-sm" (click)="openSaleModal(product)"
+                                            [title]="'ADMIN.APPLY_SALE' | translate">
+                                            <i class="bi bi-tag"></i>
+                                        </button>
+                                        <button class="btn btn-outline-danger btn-sm"
+                                            (click)="deleteProduct(product.id)" [title]="'ADMIN.DELETE' | translate">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State -->
+            <div class="text-center py-5" *ngIf="filteredProducts.length === 0 && !isLoading">
+                <i class="bi bi-box-seam fs-1 text-muted"></i>
+                <h5 class="text-muted mt-3">{{ 'ADMIN.NO_PRODUCTS' | translate }}</h5>
+                <p class="text-muted">{{ 'ADMIN.ADD_PRODUCT' | translate }}</p>
+            </div>
+
+            <!-- Loading State -->
+            <div class="text-center py-5" *ngIf="isLoading">
+                <div class="spinner-border spinner-pink" role="status">
+                    <span class="visually-hidden">{{ 'ADMIN.LOADING' | translate }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Product Modal -->
+<div class="modal" [class.d-block]="showProductModal" [style.display]="showProductModal ? 'block' : 'none'"
+    tabindex="-1" *ngIf="showProductModal">
+    <div class="modal-backdrop fade show" (click)="closeProductModal()"></div>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    {{ editingProduct ? ('ADMIN.EDIT_PRODUCT' | translate) : ('ADMIN.ADD_NEW_PRODUCT' | translate) }}
+                </h5>
+                <button type="button" class="btn-close" (click)="closeProductModal()"></button>
+            </div>
+            <form (ngSubmit)="saveProduct()" #productFormRef="ngForm">
+                <div class="modal-body">
+                    <!-- Debug info -->
+                    <div class="alert alert-info" *ngIf="categories.length === 0">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        {{ 'ADMIN.NO_CATEGORIES' | translate }}. {{ 'ADMIN.CATEGORIES_SECTION' | translate }}: {{
+                        categories.length }}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{{ 'ADMIN.NAME' | translate }} *</label>
+                            <input type="text" class="form-control" [(ngModel)]="productForm.name" name="name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{{ 'ADMIN.BRAND' | translate }}</label>
+                            <input type="text" class="form-control" [(ngModel)]="productForm.brand" name="brand">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">{{ 'ADMIN.DESCRIPTION' | translate }}</label>
+                        <textarea class="form-control" rows="3" [(ngModel)]="productForm.description"
+                            name="description"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">{{ 'ADMIN.PRICE' | translate }} *</label>
+                            <input type="number" class="form-control" step="0.001" min="0"
+                                [(ngModel)]="productForm.price" name="price" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">{{ 'ADMIN.SALE_PRICE' | translate }}</label>
+                            <input type="number" class="form-control" step="0.001" min="0"
+                                [(ngModel)]="productForm.salePrice" name="salePrice">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">{{ 'ADMIN.STOCK' | translate }} *</label>
+                            <input type="number" class="form-control" min="0" [(ngModel)]="productForm.stockQuantity"
+                                name="stockQuantity" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{{ 'ADMIN.CATEGORY' | translate }} * ({{ categories.length
+                                }})</label>
+                            <select class="form-select" [(ngModel)]="productForm.categoryId" name="categoryId" required>
+                                <option value="">{{ 'ADMIN.CATEGORY' | translate }}</option>
+                                <option *ngFor="let category of categories" [value]="category.id">
+                                    {{ category.name }}
+                                </option>
+                            </select>
+                            <div class="form-text text-danger" *ngIf="categories.length === 0">
+                                ⚠️ {{ 'ADMIN.NO_CATEGORIES' | translate }}
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{{ 'ADMIN.IMAGE_URL' | translate }}</label>
+                            <input type="url" class="form-control" [(ngModel)]="productForm.imageUrl" name="imageUrl">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{{ 'ADMIN.SHADE' | translate }}</label>
+                            <input type="text" class="form-control" [(ngModel)]="productForm.shade" name="shade">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">{{ 'ADMIN.SIZE' | translate }}</label>
+                            <input type="text" class="form-control" [(ngModel)]="productForm.size" name="size">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">{{ 'ADMIN.SKIN_TYPE' | translate }}</label>
+                        <input type="text" class="form-control" [(ngModel)]="productForm.skinType" name="skinType">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">{{ 'ADMIN.INGREDIENTS' | translate }}</label>
+                        <textarea class="form-control" rows="2" [(ngModel)]="productForm.ingredients"
+                            name="ingredients"></textarea>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" [(ngModel)]="productForm.isActive"
+                                    name="isActive">
+                                <label class="form-check-label">{{ 'ADMIN.ACTIVE' | translate }}</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" [(ngModel)]="productForm.isFeatured"
+                                    name="isFeatured">
+                                <label class="form-check-label">{{ 'ADMIN.FEATURED' | translate }}</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" [(ngModel)]="productForm.isOnSale"
+                                    name="isOnSale">
+                                <label class="form-check-label">{{ 'ADMIN.SALE' | translate }}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="closeProductModal()">
+                        {{ 'ADMIN.CANCEL' | translate }}
+                    </button>
+                    <button type="submit" class="btn btn-primary"
+                        [disabled]="!productFormRef.valid || categories.length === 0">
+                        {{ 'ADMIN.SAVE' | translate }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Sale Modal -->
+<div class="modal" [class.d-block]="showSaleModal" [style.display]="showSaleModal ? 'block' : 'none'" tabindex="-1"
+    *ngIf="showSaleModal">
+    <div class="modal-backdrop fade show" (click)="closeSaleModal()"></div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Manage Sale - {{ selectedProductForSale?.name }}</h5>
+                <button type="button" class="btn-close" (click)="closeSaleModal()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" [(ngModel)]="saleForm.isOnSale" id="isOnSale">
+                    <label class="form-check-label" for="isOnSale">
+                        Put this product on sale
+                    </label>
+                </div>
+
+                <div *ngIf="saleForm.isOnSale">
+                    <label class="form-label">Sale Price *</label>
+                    <input type="number" class="form-control" step="0.001" min="0" [(ngModel)]="saleForm.salePrice"
+                        placeholder="Enter sale price">
+                    <div class="form-text">
+                        Original Price: {{ selectedProductForSale?.price | currency:'JOD':'symbol':'1.3-3' }}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closeSaleModal()">
+                    Cancel
+                </button>
+                <button type="button" class="btn btn-primary" (click)="applySale()">
+                    Apply Sale
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bulk Actions Modal -->
+<div class="modal" [class.d-block]="showBulkModal" [style.display]="showBulkModal ? 'block' : 'none'" tabindex="-1"
+    *ngIf="showBulkModal">
+    <div class="modal-backdrop fade show" (click)="closeBulkModal()"></div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Bulk Actions ({{ selectedProducts.length }} products)</h5>
+                <button type="button" class="btn-close" (click)="closeBulkModal()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Select Action</label>
+                    <select class="form-select" [(ngModel)]="bulkAction">
+                        <option value="">Choose action...</option>
+                        <option value="activate">Activate Products</option>
+                        <option value="deactivate">Deactivate Products</option>
+                        <option value="feature">Mark as Featured</option>
+                        <option value="unfeature">Remove Featured</option>
+                        <option value="sale">Put on Sale</option>
+                        <option value="removesale">Remove from Sale</option>
+                    </select>
+                </div>
+
+                <div *ngIf="bulkAction === 'sale'" class="mb-3">
+                    <label class="form-label">Sale Price</label>
+                    <input type="number" class="form-control" step="0.001" min="0" [(ngModel)]="bulkSalePrice"
+                        placeholder="Enter sale price for all selected products">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closeBulkModal()">
+                    Cancel
+                </button>
+                <button type="button" class="btn btn-primary" (click)="applyBulkAction()" [disabled]="!bulkAction">
+                    Apply to {{ selectedProducts.length }} Products
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

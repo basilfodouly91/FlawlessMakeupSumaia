@@ -1,0 +1,135 @@
+<div class="container-fluid py-4">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="text-pink mb-0">
+                    <i class="bi bi-grid me-2"></i>
+                    {{ 'ADMIN.CATEGORY_MANAGEMENT' | translate }}
+                </h1>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-success" (click)="openCategoryModal()">
+                        <i class="bi bi-plus-circle me-1"></i>
+                        {{ 'ADMIN.ADD_CATEGORY' | translate }}
+                    </button>
+                    <button class="btn btn-outline-primary" (click)="refreshCategories()">
+                        <i class="bi bi-arrow-clockwise me-1"></i>
+                        {{ 'ADMIN.REFRESH' | translate }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Categories Grid -->
+    <div class="row g-4" *ngIf="!isLoading">
+        <div class="col-lg-4 col-md-6" *ngFor="let category of categories">
+            <div class="card h-100">
+                <img [src]="category.imageUrl" [alt]="category.name" class="card-img-top"
+                    style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title">{{ category.name }}</h5>
+                        <div>
+                            <span class="badge bg-success me-1" *ngIf="category.isActive">{{ 'ADMIN.ACTIVE' | translate
+                                }}</span>
+                            <span class="badge bg-secondary me-1" *ngIf="!category.isActive">{{ 'ADMIN.INACTIVE' |
+                                translate }}</span>
+                            <span class="badge bg-info">{{ category.productCount }} {{ 'ADMIN.PRODUCTS_COUNT' |
+                                translate }}</span>
+                        </div>
+                    </div>
+                    <p class="card-text">{{ category.description }}</p>
+                    <div class="small text-muted mb-3">
+                        {{ 'ADMIN.DISPLAY_ORDER' | translate }}: {{ category.displayOrder }}
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="btn-group w-100" role="group">
+                        <button class="btn btn-outline-primary btn-sm" (click)="editCategory(category)">
+                            <i class="bi bi-pencil"></i> {{ 'ADMIN.EDIT' | translate }}
+                        </button>
+                        <button class="btn btn-outline-success btn-sm" (click)="toggleActive(category.id)"
+                            [class.btn-success]="category.isActive" [title]="'ADMIN.TOGGLE_ACTIVE' | translate">
+                            <i class="bi bi-power"></i>
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm" (click)="deleteCategory(category.id)"
+                            [title]="'ADMIN.DELETE' | translate">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="text-center py-5" *ngIf="isLoading">
+        <div class="spinner-border spinner-pink" role="status">
+            <span class="visually-hidden">{{ 'ADMIN.LOADING' | translate }}</span>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="text-center py-5" *ngIf="categories.length === 0 && !isLoading">
+        <i class="bi bi-grid fs-1 text-muted"></i>
+        <h5 class="text-muted mt-3">{{ 'ADMIN.NO_CATEGORIES' | translate }}</h5>
+        <p class="text-muted">{{ 'ADMIN.ADD_CATEGORY' | translate }}</p>
+    </div>
+</div>
+
+<!-- Category Modal -->
+<div class="modal" [class.d-block]="showCategoryModal" [style.display]="showCategoryModal ? 'block' : 'none'"
+    tabindex="-1" *ngIf="showCategoryModal">
+    <div class="modal-backdrop fade show" (click)="closeCategoryModal()"></div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    {{ editingCategory ? ('ADMIN.EDIT_CATEGORY' | translate) : ('ADMIN.ADD_NEW_CATEGORY' | translate) }}
+                </h5>
+                <button type="button" class="btn-close" (click)="closeCategoryModal()"></button>
+            </div>
+            <form (ngSubmit)="saveCategory()" #categoryFormRef="ngForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">{{ 'ADMIN.NAME' | translate }} *</label>
+                        <input type="text" class="form-control" [(ngModel)]="categoryFormData.name" name="name"
+                            required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">{{ 'ADMIN.DESCRIPTION' | translate }}</label>
+                        <textarea class="form-control" rows="3" [(ngModel)]="categoryFormData.description"
+                            name="description"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">{{ 'ADMIN.IMAGE_URL' | translate }}</label>
+                        <input type="url" class="form-control" [(ngModel)]="categoryFormData.imageUrl" name="imageUrl">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">{{ 'ADMIN.DISPLAY_ORDER' | translate }}</label>
+                        <input type="number" class="form-control" min="0" [(ngModel)]="categoryFormData.displayOrder"
+                            name="displayOrder">
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" [(ngModel)]="categoryFormData.isActive"
+                            name="isActive">
+                        <label class="form-check-label">{{ 'ADMIN.ACTIVE' | translate }}</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="closeCategoryModal()">
+                        {{ 'ADMIN.CANCEL' | translate }}
+                    </button>
+                    <button type="submit" class="btn btn-primary" [disabled]="!categoryFormRef.valid">
+                        {{ 'ADMIN.SAVE' | translate }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

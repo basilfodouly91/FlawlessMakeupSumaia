@@ -1,0 +1,85 @@
+// Admin Dashboard Styles
+
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(255, 105, 180, 0.2);
+    }
+
+    &.bg-primary {
+        background-color: var(--primary-pink) !important;
+    }
+
+    &.bg-success {
+        background-color: #28a745 !important;
+    }
+
+    &.bg-warning {
+        background-color: #ffc107 !important;
+    }
+
+    &.bg-info {
+        background-color: #17a2b8 !important;
+    }
+}
+
+.progress {
+    background-color: var(--pale-pink);
+
+    .progress-bar {
+        &.bg-success {
+            background-color: #28a745 !important;
+        }
+
+        &.bg-warning {
+            background-color: #ffc107 !important;
+        }
+
+        &.bg-danger {
+            background-color: #dc3545 !important;
+        }
+    }
+}
+
+.table {
+    th {
+        background-color: var(--pale-pink);
+        color: var(--dark-pink);
+        font-weight: 600;
+        border: none;
+    }
+
+    td {
+        border-color: var(--pale-pink);
+    }
+}
+
+// Statistics cards animation
+.card {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+
+        h2 {
+            font-size: 1.5rem;
+        }
+    }
+}
