@@ -43,7 +43,37 @@ A full-stack e-commerce website for premium beauty products, built with ASP.NET 
 ### Prerequisites
 - .NET 8.0 SDK
 - Node.js 18+ and npm
-- Visual Studio Code or Visual Studio
+- Visual Studio 2022 (recommended) or Visual Studio Code
+
+### Option 1: Visual Studio 2022 (Recommended)
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/basilfodouly91/FlawlessMakeupSumaia.git
+   ```
+
+2. **Open the solution**:
+   - Open `FlawlessMakeupSumaia.sln` in Visual Studio 2022
+   - This will load the entire project structure
+
+3. **Set up the database**:
+   - Open **Package Manager Console** (Tools → NuGet Package Manager → Package Manager Console)
+   - Run: `Update-Database`
+   - This creates the SQLite database and seeds it with sample data
+
+4. **Run the backend**:
+   - Set `FlawlessMakeupSumaia.API` as the startup project
+   - Press **F5** or click **"Start Debugging"**
+   - API will run on `http://localhost:5001`
+
+5. **Run the frontend**:
+   - Open **Terminal** in Visual Studio (View → Terminal)
+   - Navigate to client: `cd FlawlessMakeupSumaia.Client`
+   - Install dependencies: `npm install`
+   - Start development server: `npm start`
+   - Frontend will run on `http://localhost:4200`
+
+### Option 2: Command Line Setup
 
 ### Backend Setup
 
