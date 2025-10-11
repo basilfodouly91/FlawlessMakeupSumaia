@@ -1,123 +1,123 @@
-# .NET
-bin/
-obj/
-*.user
-*.suo
-*.cache
-*.dll
-*.exe
-*.pdb
-*.log
-*.tmp
-*.temp
-*.swp
-*.swo
-*~
+# # .NET
+# bin/
+# obj/
+# *.user
+# *.suo
+# *.cache
+# *.dll
+# *.exe
+# *.pdb
+# *.log
+# *.tmp
+# *.temp
+# *.swp
+# *.swo
+# *~
 
-# Database
-*.db
-*.sqlite
-*.sqlite3
+# # Database
+# *.db
+# *.sqlite
+# *.sqlite3
 
-# Visual Studio
-.vs/
-.vscode/
-*.sln.docstates
-*.userprefs
+# # Visual Studio
+# .vs/
+# .vscode/
+# *.sln.docstates
+# *.userprefs
 
-# Node.js
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.npm
-.yarn-integrity
+# # Node.js
+# node_modules/
+# npm-debug.log*
+# yarn-debug.log*
+# yarn-error.log*
+# .npm
+# .yarn-integrity
 
-# Angular
-dist/
-.angular/
-*.tgz
-*.tar.gz
+# # Angular
+# dist/
+# .angular/
+# *.tgz
+# *.tar.gz
 
-# Environment files
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# # Environment files
+# .env
+# .env.local
+# .env.development.local
+# .env.test.local
+# .env.production.local
 
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+# # OS generated files
+# .DS_Store
+# .DS_Store?
+# ._*
+# .Spotlight-V100
+# .Trashes
+# ehthumbs.db
+# Thumbs.db
 
-# IDE
-.idea/
-*.swp
-*.swo
+# # IDE
+# .idea/
+# *.swp
+# *.swo
 
-# Logs
-logs
-*.log
+# # Logs
+# logs
+# *.log
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
+# # Runtime data
+# pids
+# *.pid
+# *.seed
+# *.pid.lock
 
-# Coverage directory used by tools like istanbul
-coverage/
+# # Coverage directory used by tools like istanbul
+# coverage/
 
-# nyc test coverage
-.nyc_output
+# # nyc test coverage
+# .nyc_output
 
-# Dependency directories
-jspm_packages/
+# # Dependency directories
+# jspm_packages/
 
-# Optional npm cache directory
-.npm
+# # Optional npm cache directory
+# .npm
 
-# Optional REPL history
-.node_repl_history
+# # Optional REPL history
+# .node_repl_history
 
-# Output of 'npm pack'
-*.tgz
+# # Output of 'npm pack'
+# *.tgz
 
-# Yarn Integrity file
-.yarn-integrity
+# # Yarn Integrity file
+# .yarn-integrity
 
-# dotenv environment variables file
-.env
+# # dotenv environment variables file
+# .env
 
-# next.js build output
-.next
+# # next.js build output
+# .next
 
-# Nuxt.js build output
-.nuxt
+# # Nuxt.js build output
+# .nuxt
 
-# vuepress build output
-.vuepress/dist
+# # vuepress build output
+# .vuepress/dist
 
-# Serverless directories
-.serverless
+# # Serverless directories
+# .serverless
 
-# FuseBox cache
-.fusebox/
+# # FuseBox cache
+# .fusebox/
 
-# DynamoDB Local files
-.dynamodb/
+# # DynamoDB Local files
+# .dynamodb/
 
-# TernJS port file
-.tern-port
+# # TernJS port file
+# .tern-port
 
-# Stores VSCode versions used for testing VSCode extensions
-.vscode-test
+# # Stores VSCode versions used for testing VSCode extensions
+# .vscode-test
 
-# Temporary folders
-tmp/
-temp/
+# # Temporary folders
+# tmp/
+# temp/
