@@ -121,7 +121,7 @@ namespace FlawlessMakeupSumaia.API.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("Carts");
+                    b.ToTable("Carts", (string)null);
                 });
 
             modelBuilder.Entity("FlawlessMakeupSumaia.API.Models.CartItem", b =>
@@ -158,7 +158,7 @@ namespace FlawlessMakeupSumaia.API.Migrations
 
                     b.HasIndex("ProductShadeId");
 
-                    b.ToTable("CartItems");
+                    b.ToTable("CartItems", (string)null);
                 });
 
             modelBuilder.Entity("FlawlessMakeupSumaia.API.Models.Category", b =>
@@ -201,7 +201,7 @@ namespace FlawlessMakeupSumaia.API.Migrations
                     b.HasIndex("NameEn")
                         .IsUnique();
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("FlawlessMakeupSumaia.API.Models.Order", b =>
@@ -296,7 +296,7 @@ namespace FlawlessMakeupSumaia.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("FlawlessMakeupSumaia.API.Models.OrderItem", b =>
@@ -333,7 +333,7 @@ namespace FlawlessMakeupSumaia.API.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrderItems", (string)null);
                 });
 
             modelBuilder.Entity("FlawlessMakeupSumaia.API.Models.Product", b =>
@@ -407,7 +407,7 @@ namespace FlawlessMakeupSumaia.API.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("FlawlessMakeupSumaia.API.Models.ProductShade", b =>
@@ -445,7 +445,7 @@ namespace FlawlessMakeupSumaia.API.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductShades");
+                    b.ToTable("ProductShades", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

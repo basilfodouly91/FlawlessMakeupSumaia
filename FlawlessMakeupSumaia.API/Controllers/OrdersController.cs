@@ -9,39 +9,58 @@ namespace FlawlessMakeupSumaia.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
     public class OrdersController : ControllerBase
     {
         private readonly IOrderService _orderService;
+        private readonly IImageService _imageService;
 
-        public OrdersController(IOrderService orderService)
+        public OrdersController(IOrderService orderService, IImageService imageService)
         {
             _orderService = orderService;
+            _imageService = imageService;
         }
 
-        private string GetUserId()
+        private string? GetUserId()
         {
-            return User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException();
+            return User.FindFirstValue(ClaimTypes.NameIdentifier);
+        }
+
+        private bool IsAuthenticated()
+        {
+            return User.Identity?.IsAuthenticated ?? false;
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrders()
         {
             var userId = GetUserId();
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+                
             var orders = await _orderService.GetOrdersByUserIdAsync(userId);
             return Ok(orders.Select(o => o.ToDto()));
         }
 
+        [HttpGet("admin/all")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<IEnumerable<OrderDto>>> GetAllOrders()
+        {
+            var orders = await _orderService.GetAllOrdersAsync();
+            return Ok(orders.Select(o => o.ToDto()));
+        }
+
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<OrderDto>> GetOrder(int id)
         {
             var order = await _orderService.GetOrderByIdAsync(id);
             if (order == null)
                 return NotFound();
 
-            // Ensure user can only access their own orders
+            // Ensure user can only access their own orders (unless admin)
             var userId = GetUserId();
-            if (order.UserId != userId)
+            if (order.UserId != userId && !User.IsInRole("Admin"))
                 return Forbid();
 
             return Ok(order.ToDto());
@@ -54,10 +73,19 @@ namespace FlawlessMakeupSumaia.API.Controllers
             if (order == null)
                 return NotFound();
 
-            // Ensure user can only access their own orders
-            var userId = GetUserId();
-            if (order.UserId != userId)
-                return Forbid();
+            // For authenticated users, ensure they can only access their own orders
+            if (IsAuthenticated())
+            {
+                var userId = GetUserId();
+                if (order.UserId != userId && !User.IsInRole("Admin"))
+                    return Forbid();
+            }
+            else
+            {
+                // For guest orders, allow access if it's a guest order
+                if (!string.IsNullOrEmpty(order.UserId))
+                    return Forbid();
+            }
 
             return Ok(order.ToDto());
         }
@@ -67,11 +95,42 @@ namespace FlawlessMakeupSumaia.API.Controllers
         {
             var userId = GetUserId();
             
+            // Validate: for guest checkout, email and name are required
+            if (string.IsNullOrEmpty(userId))
+            {
+                if (string.IsNullOrEmpty(dto.GuestEmail) || string.IsNullOrEmpty(dto.GuestName))
+                {
+                    return BadRequest("Guest email and name are required for guest checkout");
+                }
+            }
+            
             try
             {
                 var orderModel = dto.ToModel();
+                
+                // Process payment proof image if provided
+                if (!string.IsNullOrEmpty(dto.PaymentProofImageUrl))
+                {
+                    Console.WriteLine($"=== PAYMENT PROOF RECEIVED ===");
+                    Console.WriteLine($"Length: {dto.PaymentProofImageUrl.Length}");
+                    Console.WriteLine($"Preview: {dto.PaymentProofImageUrl.Substring(0, Math.Min(100, dto.PaymentProofImageUrl.Length))}...");
+                    
+                    orderModel.PaymentProofImageUrl = _imageService.ProcessImage(dto.PaymentProofImageUrl);
+                    
+                    Console.WriteLine($"Processed URL: {orderModel.PaymentProofImageUrl.Substring(0, Math.Min(100, orderModel.PaymentProofImageUrl.Length))}...");
+                }
+                else
+                {
+                    Console.WriteLine("=== NO PAYMENT PROOF PROVIDED ===");
+                }
+                
                 var order = await _orderService.CreateOrderFromCartAsync(userId, orderModel);
-                return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order.ToDto());
+                
+                Console.WriteLine($"=== ORDER CREATED ===");
+                Console.WriteLine($"Order ID: {order.Id}");
+                Console.WriteLine($"Has Payment Proof: {!string.IsNullOrEmpty(order.PaymentProofImageUrl)}");
+                
+                return CreatedAtAction(nameof(GetOrderByNumber), new { orderNumber = order.OrderNumber }, order.ToDto());
             }
             catch (ArgumentException ex)
             {
@@ -80,7 +139,7 @@ namespace FlawlessMakeupSumaia.API.Controllers
         }
 
         [HttpPut("{id}/status")]
-        [Authorize] // In a real app, this would be admin-only
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<OrderDto>> UpdateOrderStatus(int id, UpdateOrderStatusDto dto)
         {
             try

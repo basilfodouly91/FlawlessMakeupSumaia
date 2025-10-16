@@ -6,9 +6,14 @@ namespace FlawlessMakeupSumaia.API.Models
     {
         public int Id { get; set; }
         
-        public string UserId { get; set; } = string.Empty;
+        // Nullable for guest orders
+        public string? UserId { get; set; }
         
-        public virtual ApplicationUser User { get; set; } = null!;
+        public virtual ApplicationUser? User { get; set; }
+        
+        // Guest order information
+        public string? GuestEmail { get; set; }
+        public string? GuestName { get; set; }
         
         public string OrderNumber { get; set; } = string.Empty;
         
@@ -55,6 +60,8 @@ namespace FlawlessMakeupSumaia.API.Models
         
         public string PaymentTransactionId { get; set; } = string.Empty;
         
+        public string? PaymentProofImageUrl { get; set; }
+        
         public DateTime? PaymentDate { get; set; }
         
         public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
@@ -87,11 +94,9 @@ namespace FlawlessMakeupSumaia.API.Models
     
     public enum OrderStatus
     {
-        Pending,
-        Processing,
-        Shipped,
-        Delivered,
-        Cancelled,
-        Refunded
+        Pending = 0,
+        Confirmed = 1,
+        Completed = 2,
+        Cancelled = 3
     }
 }

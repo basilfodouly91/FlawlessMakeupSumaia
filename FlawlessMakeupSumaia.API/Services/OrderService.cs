@@ -8,11 +8,19 @@ namespace FlawlessMakeupSumaia.API.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly ICartService _cartService;
+        private readonly IEmailService _emailService;
+        private readonly ILogger<OrderService> _logger;
 
-        public OrderService(ApplicationDbContext context, ICartService cartService)
+        public OrderService(
+            ApplicationDbContext context, 
+            ICartService cartService,
+            IEmailService emailService,
+            ILogger<OrderService> logger)
         {
             _context = context;
             _cartService = cartService;
+            _emailService = emailService;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<Order>> GetOrdersByUserIdAsync(string userId)
@@ -21,6 +29,16 @@ namespace FlawlessMakeupSumaia.API.Services
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Product)
                 .Where(o => o.UserId == userId)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Order>> GetAllOrdersAsync()
+        {
+            return await _context.Orders
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                .Include(o => o.User)
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
         }
@@ -61,7 +79,7 @@ namespace FlawlessMakeupSumaia.API.Services
 
             order.Status = status;
             
-            if (status == OrderStatus.Processing && order.PaymentDate == null)
+            if (status == OrderStatus.Confirmed && order.PaymentDate == null)
             {
                 order.PaymentDate = DateTime.UtcNow;
             }
@@ -70,15 +88,30 @@ namespace FlawlessMakeupSumaia.API.Services
             return order;
         }
 
-        public async Task<Order> CreateOrderFromCartAsync(string userId, Order orderDetails)
+        public async Task<Order> CreateOrderFromCartAsync(string? userId, Order orderDetails)
         {
-            var cart = await _cartService.GetCartByUserIdAsync(userId);
-            if (cart == null || !cart.CartItems.Any())
-                throw new ArgumentException("Cart is empty");
+            List<CartItem> cartItems;
+
+            // Get cart items based on whether user is authenticated or guest
+            if (!string.IsNullOrEmpty(userId))
+            {
+                var cart = await _cartService.GetCartByUserIdAsync(userId);
+                if (cart == null || !cart.CartItems.Any())
+                    throw new ArgumentException("Cart is empty");
+                cartItems = cart.CartItems.ToList();
+            }
+            else
+            {
+                // For guest orders, we expect cart items to be passed through the guest cart service
+                // This is a simplified approach - in production, you might want to handle this differently
+                throw new ArgumentException("Guest checkout requires cart items to be provided");
+            }
 
             var order = new Order
             {
                 UserId = userId,
+                GuestEmail = orderDetails.GuestEmail,
+                GuestName = orderDetails.GuestName,
                 OrderNumber = await GenerateOrderNumberAsync(),
                 OrderDate = DateTime.UtcNow,
                 Status = OrderStatus.Pending,
@@ -96,11 +129,12 @@ namespace FlawlessMakeupSumaia.API.Services
                 
                 // Payment details
                 PaymentMethod = orderDetails.PaymentMethod,
+                PaymentProofImageUrl = orderDetails.PaymentProofImageUrl,
                 Notes = orderDetails.Notes
             };
 
             // Create order items from cart items
-            foreach (var cartItem in cart.CartItems)
+            foreach (var cartItem in cartItems)
             {
                 var orderItem = new OrderItem
                 {
@@ -115,15 +149,29 @@ namespace FlawlessMakeupSumaia.API.Services
 
             // Calculate totals
             order.SubTotal = order.OrderItems.Sum(oi => oi.TotalPrice);
-            order.Tax = order.SubTotal * 0.16m; // 16% tax
-            order.ShippingCost = order.SubTotal > 50 ? 0 : 5; // Free shipping over 50 JOD
+            order.Tax = 0; // No tax
+            order.ShippingCost = 3; // Fixed 3 JOD shipping
             order.TotalAmount = order.SubTotal + order.Tax + order.ShippingCost;
 
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
 
             // Clear the cart
-            await _cartService.ClearCartAsync(userId);
+            if (!string.IsNullOrEmpty(userId))
+            {
+                await _cartService.ClearCartAsync(userId);
+            }
+
+            // Send email notification to admin
+            try
+            {
+                await _emailService.SendOrderNotificationToAdminAsync(order);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Failed to send email notification for order {order.OrderNumber}");
+                // Don't fail the order creation if email fails
+            }
 
             return await GetOrderByIdAsync(order.Id) ?? order;
         }

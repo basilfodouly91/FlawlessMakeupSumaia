@@ -1,0 +1,170 @@
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="text-pink mb-3">{{ 'ADMIN_ORDERS.TITLE' | translate }}</h1>
+            
+            <!-- Filter -->
+            <div class="card">
+                <div class="card-body">
+                    <div class="row align-items-end">
+                        <div class="col-md-4">
+                            <label class="form-label">{{ 'ADMIN_ORDERS.FILTER_STATUS' | translate }}</label>
+                            <select class="form-select" [(ngModel)]="statusFilter" (change)="filterOrders()">
+                                <option value="all">{{ 'ADMIN_ORDERS.ALL_ORDERS' | translate }}</option>
+                                <option [value]="OrderStatus.Pending">{{ 'ADMIN_ORDERS.PENDING' | translate }}</option>
+                                <option [value]="OrderStatus.Confirmed">{{ 'ADMIN_ORDERS.CONFIRMED' | translate }}</option>
+                                <option [value]="OrderStatus.Completed">{{ 'ADMIN_ORDERS.COMPLETED' | translate }}</option>
+                                <option [value]="OrderStatus.Cancelled">{{ 'ADMIN_ORDERS.CANCELLED' | translate }}</option>
+                            </select>
+                        </div>
+                        <div class="col-md-8 text-end">
+                            <button class="btn btn-outline-primary" (click)="loadOrders()">
+                                <i class="bi bi-arrow-clockwise me-2"></i>
+                                {{ 'ADMIN.REFRESH' | translate }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="text-center py-5" *ngIf="isLoading">
+        <div class="spinner-border spinner-pink" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Orders Table -->
+    <div class="card" *ngIf="!isLoading">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>{{ 'ADMIN_ORDERS.ORDER_NUMBER' | translate }}</th>
+                            <th>{{ 'ADMIN_ORDERS.CUSTOMER' | translate }}</th>
+                            <th>{{ 'ADMIN_ORDERS.DATE' | translate }}</th>
+                            <th>{{ 'ADMIN_ORDERS.TOTAL' | translate }}</th>
+                            <th>{{ 'ADMIN_ORDERS.STATUS' | translate }}</th>
+                            <th>{{ 'ADMIN_ORDERS.ACTIONS' | translate }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let order of filteredOrders">
+                            <td>
+                                <strong>#{{ order.orderNumber }}</strong>
+                            </td>
+                            <td>
+                                <div>{{ getCustomerName(order) }}</div>
+                                <small class="text-muted" *ngIf="isGuestOrder(order)">
+                                    <i class="bi bi-person me-1"></i>{{ 'ADMIN_ORDERS.GUEST' | translate }}
+                                </small>
+                                <small class="text-muted" *ngIf="order.guestEmail">
+                                    <br>{{ order.guestEmail }}
+                                </small>
+                            </td>
+                            <td>
+                                <small>{{ order.orderDate | date:'short' }}</small>
+                            </td>
+                            <td>
+                                <strong>{{ order.totalAmount | currency:'JOD':'symbol':'1.3-3' }}</strong>
+                            </td>
+                            <td>
+                                <select class="form-select form-select-sm" 
+                                        [ngModel]="order.status" 
+                                        (ngModelChange)="updateOrderStatus(order, $event)"
+                                        [class]="getStatusClass(order.status)">
+                                    <option [value]="OrderStatus.Pending">{{ 'ADMIN_ORDERS.PENDING' | translate }}</option>
+                                    <option [value]="OrderStatus.Confirmed">{{ 'ADMIN_ORDERS.CONFIRMED' | translate }}</option>
+                                    <option [value]="OrderStatus.Completed">{{ 'ADMIN_ORDERS.COMPLETED' | translate }}</option>
+                                    <option [value]="OrderStatus.Cancelled">{{ 'ADMIN_ORDERS.CANCELLED' | translate }}</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" (click)="viewOrderDetails(order)">
+                                    <i class="bi bi-eye me-1"></i>
+                                    {{ 'ADMIN_ORDERS.VIEW_DETAILS' | translate }}
+                                </button>
+                            </td>
+                        </tr>
+                        <tr *ngIf="filteredOrders.length === 0">
+                            <td colspan="6" class="text-center text-muted py-4">
+                                {{ 'ADMIN.NO_PRODUCTS' | translate }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Order Details Modal -->
+<div class="modal fade show d-block" *ngIf="showDetailsModal && selectedOrder" (click)="closeDetailsModal()">
+    <div class="modal-dialog modal-lg" (click)="$event.stopPropagation()">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ 'ADMIN_ORDERS.ORDER_NUMBER' | translate }}: #{{ selectedOrder.orderNumber }}</h5>
+                <button type="button" class="btn-close" (click)="closeDetailsModal()"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Customer Info -->
+                <h6 class="mb-3">{{ 'CHECKOUT.CUSTOMER_INFO' | translate }}</h6>
+                <p class="mb-2"><strong>{{ getCustomerName(selectedOrder) }}</strong></p>
+                <p class="mb-2" *ngIf="isGuestOrder(selectedOrder)">
+                    <span class="badge bg-info">{{ 'ADMIN_ORDERS.GUEST' | translate }}</span>
+                </p>
+                <p class="mb-2" *ngIf="selectedOrder.guestEmail">{{ selectedOrder.guestEmail }}</p>
+                <p class="mb-2">{{ selectedOrder.shippingPhone }}</p>
+                <p class="mb-3">{{ selectedOrder.fullShippingAddress }}</p>
+
+                <hr>
+
+                <!-- Order Items -->
+                <h6 class="mb-3">{{ 'CART.TITLE' | translate }}</h6>
+                <div class="order-item mb-2" *ngFor="let item of selectedOrder.orderItems">
+                    <div class="d-flex justify-content-between">
+                        <div>{{ item.productName }} x {{ item.quantity }}</div>
+                        <div>{{ item.totalPrice | currency:'JOD':'symbol':'1.3-3' }}</div>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Totals -->
+                <div class="d-flex justify-content-between mb-2">
+                    <span>{{ 'CHECKOUT.SUBTOTAL' | translate }}:</span>
+                    <span>{{ selectedOrder.subTotal | currency:'JOD':'symbol':'1.3-3' }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span>{{ 'CHECKOUT.SHIPPING' | translate }}:</span>
+                    <span>{{ selectedOrder.shippingCost | currency:'JOD':'symbol':'1.3-3' }}</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <strong>{{ 'CHECKOUT.TOTAL' | translate }}:</strong>
+                    <strong class="text-pink">{{ selectedOrder.totalAmount | currency:'JOD':'symbol':'1.3-3' }}</strong>
+                </div>
+
+                <div class="mt-3" *ngIf="selectedOrder.notes">
+                    <h6>{{ 'CHECKOUT.DELIVERY_NOTES' | translate }}</h6>
+                    <p>{{ selectedOrder.notes }}</p>
+                </div>
+
+                <!-- Payment Proof Image -->
+                <div class="mt-3" *ngIf="selectedOrder.paymentProofImageUrl">
+                    <h6>{{ 'CHECKOUT.PAYMENT_PROOF' | translate }}</h6>
+                    <div class="payment-proof-image">
+                        <img [src]="selectedOrder.paymentProofImageUrl" alt="Payment Proof" class="img-fluid rounded">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closeDetailsModal()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-backdrop fade show" *ngIf="showDetailsModal"></div>
+

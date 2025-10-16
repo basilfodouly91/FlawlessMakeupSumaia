@@ -1,6 +1,8 @@
 export interface Order {
     id: number;
-    userId: string;
+    userId?: string;
+    guestEmail?: string;
+    guestName?: string;
     orderNumber: string;
     orderDate: Date;
     status: OrderStatus;
@@ -19,6 +21,7 @@ export interface Order {
     shippingPhone: string;
     paymentMethod: string;
     paymentTransactionId: string;
+    paymentProofImageUrl?: string;
     paymentDate?: Date;
     orderItems: OrderItem[];
     notes: string;
@@ -37,6 +40,8 @@ export interface OrderItem {
 }
 
 export interface CreateOrder {
+    guestEmail?: string;
+    guestName?: string;
     shippingFirstName: string;
     shippingLastName: string;
     shippingAddress: string;
@@ -47,14 +52,13 @@ export interface CreateOrder {
     shippingCountry: string;
     shippingPhone: string;
     paymentMethod: string;
+    paymentProofImageUrl?: string;
     notes: string;
 }
 
 export enum OrderStatus {
     Pending = 0,
-    Processing = 1,
-    Shipped = 2,
-    Delivered = 3,
-    Cancelled = 4,
-    Refunded = 5
+    Confirmed = 1,
+    Completed = 2,
+    Cancelled = 3
 }

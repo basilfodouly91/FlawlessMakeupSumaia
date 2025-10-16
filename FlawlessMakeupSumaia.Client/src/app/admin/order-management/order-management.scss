@@ -1,0 +1,40 @@
+.table {
+    th {
+        background-color: #f8f9fa;
+        font-weight: 600;
+    }
+}
+
+.modal.show {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.order-item {
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+}
+
+.badge {
+    font-size: 0.8rem;
+}
+
+.form-select-sm {
+    max-width: 150px;
+}
+
+.payment-proof-image {
+    max-width: 500px;
+    
+    img {
+        max-height: 400px;
+        object-fit: contain;
+        border: 2px solid #dee2e6;
+        cursor: pointer;
+        
+        &:hover {
+            border-color: var(--primary-pink);
+        }
+    }
+}
+

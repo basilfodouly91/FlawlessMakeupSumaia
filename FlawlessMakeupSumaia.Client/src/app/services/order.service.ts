@@ -13,6 +13,10 @@ export class OrderService {
         return this.apiService.get<Order[]>('api/orders');
     }
 
+    getAllOrdersForAdmin(): Observable<Order[]> {
+        return this.apiService.get<Order[]>('api/orders/admin/all');
+    }
+
     getOrder(id: number): Observable<Order> {
         return this.apiService.get<Order>(`api/orders/${id}`);
     }
@@ -26,6 +30,6 @@ export class OrderService {
     }
 
     updateOrderStatus(id: number, status: OrderStatus): Observable<Order> {
-        return this.apiService.put<Order>(`api/orders/${id}/status`, { status });
+        return this.apiService.put<Order>(`api/orders/${id}/status`, { Status: status });
     }
 }

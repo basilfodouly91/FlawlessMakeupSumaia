@@ -1,0 +1,44 @@
+.cliq-username {
+    font-size: 1.1rem;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.order-item {
+    img {
+        border-radius: 5px;
+        object-fit: cover;
+    }
+}
+
+.form-label {
+    font-weight: 500;
+}
+
+.text-danger {
+    color: var(--primary-pink) !important;
+}
+
+.sticky-top {
+    z-index: 10;
+}
+
+.payment-proof-preview {
+    max-width: 400px;
+    
+    img {
+        max-height: 300px;
+        object-fit: contain;
+        border: 2px solid #dee2e6;
+    }
+    
+    .btn-danger {
+        opacity: 0.9;
+        
+        &:hover {
+            opacity: 1;
+        }
+    }
+}
+

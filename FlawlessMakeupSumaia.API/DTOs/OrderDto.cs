@@ -5,7 +5,12 @@ namespace FlawlessMakeupSumaia.API.DTOs
     public class OrderDto
     {
         public int Id { get; set; }
-        public string UserId { get; set; } = string.Empty;
+        public string? UserId { get; set; }
+        
+        // Guest order information
+        public string? GuestEmail { get; set; }
+        public string? GuestName { get; set; }
+        
         public string OrderNumber { get; set; } = string.Empty;
         public DateTime OrderDate { get; set; }
         public OrderStatus Status { get; set; }
@@ -28,6 +33,7 @@ namespace FlawlessMakeupSumaia.API.DTOs
         // Payment Information
         public string PaymentMethod { get; set; } = string.Empty;
         public string PaymentTransactionId { get; set; } = string.Empty;
+        public string? PaymentProofImageUrl { get; set; }
         public DateTime? PaymentDate { get; set; }
         
         public List<OrderItemDto> OrderItems { get; set; } = new List<OrderItemDto>();
@@ -50,6 +56,10 @@ namespace FlawlessMakeupSumaia.API.DTOs
 
     public class CreateOrderDto
     {
+        // Guest order information (optional)
+        public string? GuestEmail { get; set; }
+        public string? GuestName { get; set; }
+        
         // Shipping Address
         public string ShippingFirstName { get; set; } = string.Empty;
         public string ShippingLastName { get; set; } = string.Empty;
@@ -63,6 +73,7 @@ namespace FlawlessMakeupSumaia.API.DTOs
         
         // Payment Information
         public string PaymentMethod { get; set; } = string.Empty;
+        public string? PaymentProofImageUrl { get; set; }
         public string Notes { get; set; } = string.Empty;
     }
 

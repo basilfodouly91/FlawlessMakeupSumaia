@@ -172,6 +172,8 @@ namespace FlawlessMakeupSumaia.API.Services
             {
                 Id = order.Id,
                 UserId = order.UserId,
+                GuestEmail = order.GuestEmail,
+                GuestName = order.GuestName,
                 OrderNumber = order.OrderNumber,
                 OrderDate = order.OrderDate,
                 Status = order.Status,
@@ -190,6 +192,7 @@ namespace FlawlessMakeupSumaia.API.Services
                 ShippingPhone = order.ShippingPhone,
                 PaymentMethod = order.PaymentMethod,
                 PaymentTransactionId = order.PaymentTransactionId,
+                PaymentProofImageUrl = order.PaymentProofImageUrl,
                 PaymentDate = order.PaymentDate,
                 OrderItems = order.OrderItems.Select(oi => oi.ToDto()).ToList(),
                 Notes = order.Notes
@@ -214,6 +217,8 @@ namespace FlawlessMakeupSumaia.API.Services
         {
             return new Order
             {
+                GuestEmail = dto.GuestEmail,
+                GuestName = dto.GuestName,
                 ShippingFirstName = dto.ShippingFirstName,
                 ShippingLastName = dto.ShippingLastName,
                 ShippingAddress = dto.ShippingAddress,
@@ -224,6 +229,7 @@ namespace FlawlessMakeupSumaia.API.Services
                 ShippingCountry = dto.ShippingCountry,
                 ShippingPhone = dto.ShippingPhone,
                 PaymentMethod = dto.PaymentMethod,
+                PaymentProofImageUrl = dto.PaymentProofImageUrl,
                 Notes = dto.Notes
             };
         }
