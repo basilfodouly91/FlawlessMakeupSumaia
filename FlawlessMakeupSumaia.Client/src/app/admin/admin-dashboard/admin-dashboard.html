@@ -2,26 +2,10 @@
     <!-- Header -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <h1 class="text-pink mb-0">
-                    <i class="bi bi-speedometer2 me-2"></i>
-                    {{ 'ADMIN.DASHBOARD' | translate }}
-                </h1>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-outline-primary" (click)="refreshDashboard()">
-                        <i class="bi bi-arrow-clockwise me-1"></i>
-                        {{ 'ADMIN.REFRESH' | translate }}
-                    </button>
-                    <button class="btn btn-outline-secondary" (click)="testApiConnection()">
-                        <i class="bi bi-wifi me-1"></i>
-                        {{ 'ADMIN.TEST_API' | translate }}
-                    </button>
-                    <button class="btn btn-primary" routerLink="/admin/products">
-                        <i class="bi bi-box-seam me-1"></i>
-                        {{ 'ADMIN.MANAGE_PRODUCTS' | translate }}
-                    </button>
-                </div>
-            </div>
+            <h1 class="text-pink mb-0">
+                <i class="bi bi-speedometer2 me-2"></i>
+                {{ 'ADMIN.DASHBOARD' | translate }}
+            </h1>
         </div>
     </div>
 
@@ -92,9 +76,40 @@
         </div>
     </div>
 
-    <!-- Categories and Stock Status -->
+    <!-- Products and Categories -->
     <div class="row g-4 mb-5" *ngIf="dashboard">
-        <div class="col-lg-4">
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header bg-pale-pink">
+                    <h5 class="card-title text-pink mb-0">
+                        <i class="bi bi-box-seam me-2"></i>
+                        {{ 'ADMIN.PRODUCTS_SECTION' | translate }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>{{ 'ADMIN.TOTAL_PRODUCTS' | translate }}:</span>
+                        <strong>{{ dashboard.totalProducts }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>{{ 'ADMIN.ACTIVE_PRODUCTS' | translate }}:</span>
+                        <strong class="text-success">{{ dashboard.activeProducts }}</strong>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>{{ 'ADMIN.FEATURED_PRODUCTS' | translate }}:</span>
+                        <strong class="text-warning">{{ dashboard.featuredProducts }}</strong>
+                    </div>
+                    <div class="mt-3">
+                        <button class="btn btn-outline-primary w-100" routerLink="/admin/products">
+                            <i class="bi bi-box-seam me-1"></i>
+                            {{ 'ADMIN.MANAGE_PRODUCTS' | translate }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
             <div class="card h-100">
                 <div class="card-header bg-pale-pink">
                     <h5 class="card-title text-pink mb-0">
@@ -113,66 +128,8 @@
                     </div>
                     <div class="mt-3">
                         <button class="btn btn-outline-primary w-100" routerLink="/admin/categories">
+                            <i class="bi bi-grid me-1"></i>
                             {{ 'ADMIN.MANAGE_CATEGORIES' | translate }}
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4">
-            <div class="card h-100">
-                <div class="card-header bg-pale-pink">
-                    <h5 class="card-title text-pink mb-0">
-                        <i class="bi bi-boxes me-2"></i>
-                        {{ 'ADMIN.STOCK_STATUS' | translate }}
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>{{ 'ADMIN.LOW_STOCK' | translate }}:</span>
-                        <span class="badge bg-warning">{{ dashboard.lowStockProducts }}</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>{{ 'ADMIN.OUT_OF_STOCK' | translate }}:</span>
-                        <span class="badge bg-danger">{{ dashboard.outOfStockProducts }}</span>
-                    </div>
-                    <div class="progress mt-3" style="height: 20px;">
-                        <div class="progress-bar bg-success" [style.width.%]="getStockPercentage('in-stock')"
-                            [title]="'ADMIN.IN_STOCK' | translate">
-                        </div>
-                        <div class="progress-bar bg-warning" [style.width.%]="getStockPercentage('low-stock')"
-                            [title]="'ADMIN.LOW_STOCK' | translate">
-                        </div>
-                        <div class="progress-bar bg-danger" [style.width.%]="getStockPercentage('out-of-stock')"
-                            [title]="'ADMIN.OUT_OF_STOCK' | translate">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4">
-            <div class="card h-100">
-                <div class="card-header bg-pale-pink">
-                    <h5 class="card-title text-pink mb-0">
-                        <i class="bi bi-graph-up me-2"></i>
-                        {{ 'ADMIN.QUICK_ACTIONS' | translate }}
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <button class="btn btn-primary" routerLink="/admin/products/new">
-                            <i class="bi bi-plus-circle me-2"></i>
-                            {{ 'ADMIN.ADD_NEW_PRODUCT' | translate }}
-                        </button>
-                        <button class="btn btn-outline-primary" routerLink="/admin/categories/new">
-                            <i class="bi bi-plus-circle me-2"></i>
-                            {{ 'ADMIN.ADD_NEW_CATEGORY' | translate }}
-                        </button>
-                        <button class="btn btn-outline-secondary" (click)="viewAnalytics()">
-                            <i class="bi bi-bar-chart me-2"></i>
-                            {{ 'ADMIN.VIEW_ANALYTICS' | translate }}
                         </button>
                     </div>
                 </div>

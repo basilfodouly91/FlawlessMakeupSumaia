@@ -62,6 +62,16 @@ export class AuthService {
         return localStorage.getItem('token');
     }
 
+    isAdmin(): boolean {
+        const user = this.getCurrentUser();
+        return user?.roles?.includes('Admin') || false;
+    }
+
+    hasRole(role: string): boolean {
+        const user = this.getCurrentUser();
+        return user?.roles?.includes(role) || false;
+    }
+
     private setAuthData(token: string, user: User): void {
         localStorage.setItem('token', token);
         localStorage.setItem('user', JSON.stringify(user));

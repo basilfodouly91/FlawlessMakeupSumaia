@@ -44,7 +44,7 @@ namespace FlawlessMakeupSumaia.API.Controllers
             
             try
             {
-                var cart = await _cartService.AddToCartAsync(userId, dto.ProductId, dto.Quantity);
+                var cart = await _cartService.AddToCartAsync(userId, dto.ProductId, dto.Quantity, dto.ProductShadeId);
                 return Ok(cart.ToDto());
             }
             catch (ArgumentException ex)

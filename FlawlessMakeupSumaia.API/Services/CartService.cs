@@ -19,10 +19,12 @@ namespace FlawlessMakeupSumaia.API.Services
                 .Include(c => c.CartItems)
                     .ThenInclude(ci => ci.Product)
                         .ThenInclude(p => p.Category)
+                .Include(c => c.CartItems)
+                    .ThenInclude(ci => ci.ProductShade)
                 .FirstOrDefaultAsync(c => c.UserId == userId);
         }
 
-        public async Task<Cart> AddToCartAsync(string userId, int productId, int quantity)
+        public async Task<Cart> AddToCartAsync(string userId, int productId, int quantity, int? productShadeId = null)
         {
             var cart = await GetCartByUserIdAsync(userId);
             
@@ -32,17 +34,35 @@ namespace FlawlessMakeupSumaia.API.Services
                 {
                     UserId = userId,
                     DateCreated = DateTime.UtcNow,
-                    DateUpdated = DateTime.UtcNow
+                    DateUpdated = DateTime.UtcNow,
+                    CartItems = new List<CartItem>()
                 };
                 _context.Carts.Add(cart);
                 await _context.SaveChangesAsync();
+                
+                // Reload cart with includes to ensure CartItems collection is properly initialized
+                cart = await GetCartByUserIdAsync(userId);
+                if (cart == null)
+                    throw new InvalidOperationException("Failed to create cart");
             }
 
-            var product = await _context.Products.FindAsync(productId);
+            // Load product with Category to avoid null reference when mapping to DTO
+            var product = await _context.Products
+                .Include(p => p.Category)
+                .FirstOrDefaultAsync(p => p.Id == productId);
             if (product == null)
                 throw new ArgumentException("Product not found");
 
-            var existingCartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
+            // Ensure CartItems collection is initialized
+            if (cart.CartItems == null)
+            {
+                cart.CartItems = new List<CartItem>();
+            }
+
+            // For products with shades, treat each shade as a separate item
+            var existingCartItem = cart.CartItems.FirstOrDefault(ci => 
+                ci.ProductId == productId && 
+                ci.ProductShadeId == productShadeId);
             
             if (existingCartItem != null)
             {
@@ -57,6 +77,7 @@ namespace FlawlessMakeupSumaia.API.Services
                     ProductId = productId,
                     Quantity = quantity,
                     Price = product.SalePrice ?? product.Price,
+                    ProductShadeId = productShadeId,
                     DateAdded = DateTime.UtcNow
                 };
                 cart.CartItems.Add(cartItem);
@@ -73,6 +94,9 @@ namespace FlawlessMakeupSumaia.API.Services
             var cart = await GetCartByUserIdAsync(userId);
             if (cart == null)
                 throw new ArgumentException("Cart not found");
+
+            if (cart.CartItems == null)
+                throw new ArgumentException("Cart is empty");
 
             var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
             if (cartItem == null)
@@ -99,6 +123,9 @@ namespace FlawlessMakeupSumaia.API.Services
             if (cart == null)
                 throw new ArgumentException("Cart not found");
 
+            if (cart.CartItems == null)
+                return cart;
+
             var cartItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
             if (cartItem != null)
             {
@@ -114,6 +141,9 @@ namespace FlawlessMakeupSumaia.API.Services
         {
             var cart = await GetCartByUserIdAsync(userId);
             if (cart == null) return false;
+
+            if (cart.CartItems == null)
+                return true;
 
             cart.CartItems.Clear();
             cart.DateUpdated = DateTime.UtcNow;

@@ -62,8 +62,9 @@ namespace FlawlessMakeupSumaia.API.Controllers
                 StockQuantity = p.StockQuantity,
                 ImageUrl = p.ImageUrl,
                 CategoryId = p.CategoryId,
-                CategoryName = p.Category?.Name ?? "",
+                CategoryName = p.Category != null ? p.Category.NameEn : "",
                 Brand = p.Brand,
+                ProductShades = p.ProductShades.Select(ps => ps.ToDto()).ToList(),
                 IsActive = p.IsActive,
                 IsFeatured = p.IsFeatured,
                 IsOnSale = p.IsOnSale,
@@ -173,7 +174,8 @@ namespace FlawlessMakeupSumaia.API.Controllers
             var adminCategories = categories.Select(c => new AdminCategoryDto
             {
                 Id = c.Id,
-                Name = c.Name,
+                NameEn = c.NameEn,
+                NameAr = c.NameAr,
                 Description = c.Description,
                 ImageUrl = c.ImageUrl,
                 DisplayOrder = c.DisplayOrder,
@@ -202,11 +204,10 @@ namespace FlawlessMakeupSumaia.API.Controllers
         public async Task<ActionResult<ProductAnalyticsDto>> GetProductAnalytics()
         {
             var products = await _productService.GetAllProductsAsync();
-            
             var analytics = new ProductAnalyticsDto
             {
                 TotalProducts = products.Count(),
-                ProductsByCategory = products.GroupBy(p => p.Category.Name)
+                ProductsByCategory = products.GroupBy(p => p.Category != null ? p.Category.NameEn : "")
                     .Select(g => new CategoryProductCount 
                     { 
                         CategoryName = g.Key, 
@@ -256,6 +257,7 @@ namespace FlawlessMakeupSumaia.API.Controllers
         public int CategoryId { get; set; }
         public string CategoryName { get; set; } = string.Empty;
         public string? Brand { get; set; }
+        public List<ProductShadeDto> ProductShades { get; set; } = new List<ProductShadeDto>();
         public bool IsActive { get; set; }
         public bool IsFeatured { get; set; }
         public bool IsOnSale { get; set; }
@@ -267,7 +269,8 @@ namespace FlawlessMakeupSumaia.API.Controllers
     public class AdminCategoryDto
     {
         public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
+        public string NameEn { get; set; } = string.Empty;
+        public string NameAr { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public string ImageUrl { get; set; } = string.Empty;
         public int DisplayOrder { get; set; }

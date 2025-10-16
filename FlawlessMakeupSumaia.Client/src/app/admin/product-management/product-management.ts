@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil, forkJoin } from 'rxjs';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { AdminService } from '../../services/admin.service';
 import { CategoryService } from '../../services/category.service';
@@ -24,6 +24,7 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
   filteredProducts: AdminProduct[] = [];
   categories: Category[] = [];
   isLoading = true;
+  currentLang = 'en';
 
   // Filters
   searchTerm = '';
@@ -53,8 +54,16 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
 
   constructor(
     private adminService: AdminService,
-    private categoryService: CategoryService
-  ) { }
+    private categoryService: CategoryService,
+    private translate: TranslateService
+  ) {
+    this.currentLang = this.translate.currentLang || this.translate.defaultLang || 'en';
+    
+    // Subscribe to language changes
+    this.translate.onLangChange.pipe(takeUntil(this.destroy$)).subscribe((event) => {
+      this.currentLang = event.lang;
+    });
+  }
 
   ngOnInit(): void {
     this.loadData();
@@ -74,6 +83,12 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
     }).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
+          console.log('=== LOADED DATA FROM BACKEND ===');
+          console.log('Products received:', data.products.length);
+          console.log('First product:', data.products[0]);
+          console.log('First product shades:', data.products[0]?.productShades);
+          console.log('All products with shades:', data.products.filter(p => p.productShades && p.productShades.length > 0));
+          
           this.products = data.products;
           this.categories = data.categories;
           this.debugInfo = `Loaded ${data.products.length} products and ${data.categories.length} categories`;
@@ -155,9 +170,33 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
   // Product CRUD operations
   openProductModal(product?: AdminProduct): void {
     console.log('Opening product modal, categories available:', this.categories.length);
+    console.log('showProductModal before:', this.showProductModal);
+    console.log('Product to edit:', product);
+    console.log('Product shades:', product?.productShades);
+    
     this.editingProduct = product || null;
-    this.productForm = product ? { ...product } : this.getEmptyProductForm();
+    this.productForm = product ? { 
+      ...product,
+      productShades: product.productShades && Array.isArray(product.productShades) 
+        ? product.productShades.map(shade => ({
+            id: shade.id, // Preserve ID for existing shades
+            name: shade.name,
+            stockQuantity: shade.stockQuantity,
+            isActive: shade.isActive,
+            displayOrder: shade.displayOrder
+          })) 
+        : [] as any[]
+    } : this.getEmptyProductForm();
+    
     this.showProductModal = true;
+    console.log('showProductModal after:', this.showProductModal);
+    console.log('Product form:', this.productForm);
+    console.log('Product form shades:', this.productForm.productShades);
+    
+    // Force change detection
+    setTimeout(() => {
+      console.log('Modal should be visible now');
+    }, 100);
   }
 
   closeProductModal(): void {
@@ -167,6 +206,7 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
   }
 
   private getEmptyProductForm(): any {
+    console.log('Creating empty product form');
     return {
       name: '',
       description: '',
@@ -177,6 +217,7 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
       categoryId: '',
       brand: '',
       shade: '',
+      productShades: [] as any[],
       size: '',
       ingredients: '',
       skinType: '',
@@ -186,8 +227,90 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
     };
   }
 
+  // Shade management methods
+  addShade(): void {
+    console.log('=== ADD SHADE CALLED ===');
+    console.log('productForm:', this.productForm);
+    console.log('Current productForm.productShades:', this.productForm.productShades);
+    console.log('Is array?', Array.isArray(this.productForm.productShades));
+    
+    // Ensure productShades is initialized
+    if (!this.productForm.productShades || !Array.isArray(this.productForm.productShades)) {
+      console.log('Initializing productShades array');
+      this.productForm.productShades = [];
+    }
+    
+    const newShade = {
+      name: '',
+      stockQuantity: 0,
+      isActive: true,
+      displayOrder: this.productForm.productShades.length
+    };
+    
+    console.log('New shade to add:', newShade);
+    
+    // Create a new array reference to trigger Angular change detection
+    this.productForm.productShades = [...this.productForm.productShades, newShade];
+    
+    console.log('After add - productForm.productShades:', this.productForm.productShades);
+    console.log('After add - length:', this.productForm.productShades.length);
+    console.log('=== END ADD SHADE ===');
+  }
+
+  removeShade(index: number): void {
+    console.log('Removing shade at index:', index);
+    // Create new array without the removed item to trigger change detection
+    this.productForm.productShades = this.productForm.productShades.filter((_: any, i: number) => i !== index);
+    // Update display orders
+    this.productForm.productShades.forEach((shade: any, idx: number) => {
+      shade.displayOrder = idx;
+    });
+    console.log('After remove - shades count:', this.productForm.productShades.length);
+  }
+
+  moveShadeUp(index: number): void {
+    if (index > 0) {
+      console.log('Moving shade up from index:', index);
+      // Create a new array with swapped items
+      const newShades = [...this.productForm.productShades];
+      const temp = newShades[index];
+      newShades[index] = newShades[index - 1];
+      newShades[index - 1] = temp;
+      
+      // Update display orders
+      newShades.forEach((shade: any, idx: number) => {
+        shade.displayOrder = idx;
+      });
+      
+      this.productForm.productShades = newShades;
+    }
+  }
+
+  moveShadeDown(index: number): void {
+    if (index < this.productForm.productShades.length - 1) {
+      console.log('Moving shade down from index:', index);
+      // Create a new array with swapped items
+      const newShades = [...this.productForm.productShades];
+      const temp = newShades[index];
+      newShades[index] = newShades[index + 1];
+      newShades[index + 1] = temp;
+      
+      // Update display orders
+      newShades.forEach((shade: any, idx: number) => {
+        shade.displayOrder = idx;
+      });
+      
+      this.productForm.productShades = newShades;
+    }
+  }
+
   saveProduct(): void {
-    console.log('Saving product with form data:', this.productForm);
+    console.log('=== SAVE PRODUCT CALLED ===');
+    console.log('Full productForm object:', JSON.stringify(this.productForm, null, 2));
+    console.log('productForm.productShades:', this.productForm.productShades);
+    console.log('productShades is array?', Array.isArray(this.productForm.productShades));
+    console.log('productShades length:', this.productForm.productShades?.length);
+    console.log('productShades content:', JSON.stringify(this.productForm.productShades, null, 2));
 
     // Validate required fields
     if (!this.productForm.name || !this.productForm.price || !this.productForm.categoryId) {
@@ -208,18 +331,21 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
       isOnSale: Boolean(this.productForm.isOnSale),
       brand: this.productForm.brand || '',
       shade: this.productForm.shade || '',
+      productShades: this.productForm.productShades || [],
       size: this.productForm.size || '',
       ingredients: this.productForm.ingredients || '',
       skinType: this.productForm.skinType || ''
     };
 
-    console.log('Processed product data:', productData);
+    console.log('Processed product data:', JSON.stringify(productData, null, 2));
+    console.log('Sending productShades:', JSON.stringify(productData.productShades, null, 2));
 
     const operation = this.editingProduct
       ? this.adminService.updateProduct(this.editingProduct.id, {
         ...productData,
         id: this.editingProduct.id,
-        isActive: Boolean(this.productForm.isActive)
+        isActive: Boolean(this.productForm.isActive),
+        productShades: this.productForm.productShades || []
       })
       : this.adminService.createProduct(productData);
 
@@ -414,5 +540,45 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
           console.error('API Test Error:', error);
         }
       });
+  }
+
+  // Image upload handlers
+  onImageSelect(event: Event, type: 'main' | 'additional'): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image size should be less than 5MB');
+        return;
+      }
+
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64String = reader.result as string;
+        if (type === 'main') {
+          this.productForm.imageUrl = base64String;
+        }
+        // Additional images can be handled here if needed
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  removeImage(type: 'main' | 'additional'): void {
+    if (type === 'main') {
+      this.productForm.imageUrl = '';
+    }
+  }
+
+  getCategoryName(category: Category): string {
+    return this.currentLang === 'ar' ? category.nameAr : category.nameEn;
   }
 }

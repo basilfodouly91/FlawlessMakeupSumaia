@@ -9,6 +9,17 @@ export interface AdminDashboard {
     outOfStockProducts: number;
 }
 
+export interface AdminProductShade {
+    id?: number;
+    productId?: number;
+    name: string;
+    stockQuantity: number;
+    isActive: boolean;
+    displayOrder: number;
+    dateCreated?: Date;
+    dateUpdated?: Date;
+}
+
 export interface AdminProduct {
     id: number;
     name: string;
@@ -20,6 +31,7 @@ export interface AdminProduct {
     categoryId: number;
     categoryName: string;
     brand?: string;
+    productShades?: AdminProductShade[];
     isActive: boolean;
     isFeatured: boolean;
     isOnSale: boolean;
@@ -31,6 +43,8 @@ export interface AdminProduct {
 export interface AdminCategory {
     id: number;
     name: string;
+    nameEn: string;
+    nameAr: string;
     description: string;
     imageUrl: string;
     displayOrder: number;

@@ -12,20 +12,20 @@ namespace FlawlessMakeupSumaia.API.Data
             await context.Database.EnsureCreatedAsync();
 
             // Check if admin user already exists
-            var adminUser = await userManager.FindByNameAsync("admin");
+            var adminUser = await userManager.FindByEmailAsync("admin@flawlessmakeup.com");
             if (adminUser == null)
             {
                 // Create admin user
                 adminUser = new ApplicationUser
                 {
-                    UserName = "admin",
+                    UserName = "admin@flawlessmakeup.com",
                     Email = "admin@flawlessmakeup.com",
                     FirstName = "Admin",
                     LastName = "User",
                     EmailConfirmed = true
                 };
 
-                var result = await userManager.CreateAsync(adminUser, "admin");
+                var result = await userManager.CreateAsync(adminUser, "Admin@123");
                 if (result.Succeeded)
                 {
                     // Add admin role
@@ -41,65 +41,73 @@ namespace FlawlessMakeupSumaia.API.Data
             {
                 new Category
                 {
-                    Name = "MakeUp",
+                    NameEn = "MakeUp",
+                    NameAr = "مكياج",
                     Description = "Complete makeup collection including foundations, lipsticks, eyeshadows and more",
-                    ImageUrl = "https://images.unsplash.com/photo-1596462502278-27bfdc403348?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80",
+                    ImageUrl = "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?w=400",
                     DisplayOrder = 1,
                     IsActive = true
                 },
                 new Category
                 {
-                    Name = "Skin Care",
+                    NameEn = "Skin Care",
+                    NameAr = "العناية بالبشرة",
                     Description = "Premium skincare products for all skin types",
-                    ImageUrl = "https://images.unsplash.com/photo-1570194065650-d99fb4bedf0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80",
+                    ImageUrl = "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=400",
                     DisplayOrder = 2,
                     IsActive = true
                 },
                 new Category
                 {
-                    Name = "Fragrance",
+                    NameEn = "Fragrance",
+                    NameAr = "العطور",
                     Description = "Luxury fragrances and perfumes",
-                    ImageUrl = "https://images.unsplash.com/photo-1541643600914-78b084683601?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80",
+                    ImageUrl = "https://images.unsplash.com/photo-1541643600914-78b084683601?w=400",
                     DisplayOrder = 3,
                     IsActive = true
                 },
                 new Category
                 {
-                    Name = "Hair Care",
+                    NameEn = "Hair Care",
+                    NameAr = "العناية بالشعر",
                     Description = "Professional hair care products",
-                    ImageUrl = "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80",
+                    ImageUrl = "https://images.unsplash.com/photo-1522338242992-e1a54906a8da?w=400",
                     DisplayOrder = 4,
                     IsActive = true
                 },
                 new Category
                 {
-                    Name = "Body Care",
+                    NameEn = "Body Care",
+                    NameAr = "العناية بالجسم",
                     Description = "Nourishing body care essentials",
-                    ImageUrl = "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80",
+                    ImageUrl = "https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?w=400",
                     DisplayOrder = 5,
                     IsActive = true
                 },
                 new Category
                 {
-                    Name = "Lash/Brow Care",
+                    NameEn = "Lash/Brow Care",
+                    NameAr = "العناية بالرموش والحواجب",
                     Description = "Enhance your lashes and brows",
-                    ImageUrl = "https://images.unsplash.com/photo-1631214540242-6b1e5b3c8e9b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80",
+                    ImageUrl = "https://images.unsplash.com/photo-1583001931096-959e6a6a6a1d?w=400",
                     DisplayOrder = 6,
                     IsActive = true
                 },
                 new Category
                 {
-                    Name = "Teeth care",
+                    NameEn = "Teeth care",
+                    NameAr = "العناية بالأسنان",
                     Description = "Oral care and teeth whitening products",
-                    ImageUrl = "https://images.unsplash.com/photo-1609205807107-e8ec2120f9de?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80",
+                    ImageUrl = "https://images.unsplash.com/photo-1606811971618-4486d14f3f99?w=400",
                     DisplayOrder = 7,
                     IsActive = true
                 },
                 new Category
                 {
-                    Name = "Trendy Original products",
+                    NameEn = "Trendy Original products",
+                    NameAr = "منتجات أصلية رائجة",
                     Description = "Latest trending beauty products",
-                    ImageUrl = "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80",
+                    ImageUrl = "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400",
                     DisplayOrder = 8,
                     IsActive = true
                 }
@@ -323,7 +331,10 @@ namespace FlawlessMakeupSumaia.API.Data
                 }
             };
 
-            if (!categoriesExist)
+            // Check if products already exist
+            var productsExist = await context.Products.AnyAsync();
+            
+            if (!productsExist)
             {
                 await context.Products.AddRangeAsync(products);
                 await context.SaveChangesAsync();

@@ -64,3 +64,10 @@
         </div>
     </div>
 </div>
+
+<!-- Cart Confirmation Dialog -->
+<app-cart-confirmation 
+    [show]="showCartConfirmation"
+    [data]="cartConfirmationData"
+    (closed)="onCartConfirmationClosed()">
+</app-cart-confirmation>

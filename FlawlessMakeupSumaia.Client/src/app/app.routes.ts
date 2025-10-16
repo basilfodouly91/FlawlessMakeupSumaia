@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
     { path: '', loadComponent: () => import('./pages/home/home').then(m => m.HomeComponent) },
@@ -10,11 +11,11 @@ export const routes: Routes = [
     { path: 'sale', loadComponent: () => import('./pages/sale/sale').then(m => m.SaleComponent) },
     { path: 'cart', loadComponent: () => import('./pages/cart/cart').then(m => m.CartComponent) },
 
-    // Admin Routes
-    { path: 'admin', loadComponent: () => import('./admin/admin-dashboard/admin-dashboard').then(m => m.AdminDashboardComponent) },
-    { path: 'admin/dashboard', loadComponent: () => import('./admin/admin-dashboard/admin-dashboard').then(m => m.AdminDashboardComponent) },
-    { path: 'admin/products', loadComponent: () => import('./admin/product-management/product-management').then(m => m.ProductManagementComponent) },
-    { path: 'admin/categories', loadComponent: () => import('./admin/category-management/category-management').then(m => m.CategoryManagementComponent) },
+    // Admin Routes - Protected by adminGuard
+    { path: 'admin', loadComponent: () => import('./admin/admin-dashboard/admin-dashboard').then(m => m.AdminDashboardComponent), canActivate: [adminGuard] },
+    { path: 'admin/dashboard', loadComponent: () => import('./admin/admin-dashboard/admin-dashboard').then(m => m.AdminDashboardComponent), canActivate: [adminGuard] },
+    { path: 'admin/products', loadComponent: () => import('./admin/product-management/product-management').then(m => m.ProductManagementComponent), canActivate: [adminGuard] },
+    { path: 'admin/categories', loadComponent: () => import('./admin/category-management/category-management').then(m => m.CategoryManagementComponent), canActivate: [adminGuard] },
 
     { path: '**', redirectTo: '' }
 ];

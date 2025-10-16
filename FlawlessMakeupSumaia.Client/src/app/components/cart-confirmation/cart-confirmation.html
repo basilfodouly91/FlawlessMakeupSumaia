@@ -1,0 +1,43 @@
+<div class="cart-confirmation-overlay" *ngIf="show" (click)="close()">
+  <div class="cart-confirmation-dialog" (click)="$event.stopPropagation()" *ngIf="data">
+    <button type="button" class="btn-close" (click)="close()"></button>
+    
+    <div class="confirmation-content">
+      <div class="success-icon">
+        <i class="bi bi-check-circle-fill text-success"></i>
+      </div>
+      
+      <h5 class="text-center mb-4">{{ 'CART_CONFIRMATION.ITEM_ADDED' | translate }}</h5>
+      
+      <div class="product-info d-flex align-items-center mb-4">
+        <img [src]="data.productImage" [alt]="data.productName" class="product-thumbnail">
+        <div class="ms-3">
+          <h6 class="mb-0">{{ data.productName }}</h6>
+        </div>
+      </div>
+      
+      <div class="action-buttons">
+        <button 
+          class="btn btn-dark w-100 mb-2" 
+          routerLink="/cart" 
+          (click)="viewCart()">
+          <i class="bi bi-bag me-2"></i>
+          {{ 'CART_CONFIRMATION.VIEW_CART' | translate }} ({{ data.cartItemCount }})
+        </button>
+        
+        <button 
+          class="btn btn-light w-100 mb-3" 
+          routerLink="/checkout" 
+          (click)="checkout()">
+          {{ 'CART_CONFIRMATION.CHECKOUT' | translate }}
+        </button>
+        
+        <a href="javascript:void(0)" class="continue-link" (click)="continueShopping()">
+          {{ 'CART_CONFIRMATION.CONTINUE_SHOPPING' | translate }}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+

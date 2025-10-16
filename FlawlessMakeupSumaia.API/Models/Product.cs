@@ -45,6 +45,8 @@ namespace FlawlessMakeupSumaia.API.Models
         
         public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
         
+        public virtual ICollection<ProductShade> ProductShades { get; set; } = new List<ProductShade>();
+        
         // Beauty-specific properties
         public string? Brand { get; set; }
         public string? Shade { get; set; }

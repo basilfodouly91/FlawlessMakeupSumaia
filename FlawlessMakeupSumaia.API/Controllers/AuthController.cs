@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
 using FlawlessMakeupSumaia.API.Services;
 using FlawlessMakeupSumaia.API.DTOs;
+using FlawlessMakeupSumaia.API.Models;
 
 namespace FlawlessMakeupSumaia.API.Controllers
 {
@@ -9,10 +11,12 @@ namespace FlawlessMakeupSumaia.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IAuthService authService, UserManager<ApplicationUser> userManager)
         {
             _authService = authService;
+            _userManager = userManager;
         }
 
         [HttpPost("register")]
@@ -37,12 +41,19 @@ namespace FlawlessMakeupSumaia.API.Controllers
 
             var result = await _authService.RegisterAsync(registerModel);
 
+            UserDto? userDto = null;
+            if (result.User != null)
+            {
+                var roles = await _userManager.GetRolesAsync(result.User);
+                userDto = result.User.ToDto(roles.ToList());
+            }
+
             var response = new AuthResponseDto
             {
                 Success = result.Success,
                 Token = result.Token,
                 Message = result.Message,
-                User = result.User?.ToDto()
+                User = userDto
             };
 
             if (result.Success)
@@ -62,12 +73,19 @@ namespace FlawlessMakeupSumaia.API.Controllers
 
             var result = await _authService.LoginAsync(loginModel);
 
+            UserDto? userDto = null;
+            if (result.User != null)
+            {
+                var roles = await _userManager.GetRolesAsync(result.User);
+                userDto = result.User.ToDto(roles.ToList());
+            }
+
             var response = new AuthResponseDto
             {
                 Success = result.Success,
                 Token = result.Token,
                 Message = result.Message,
-                User = result.User?.ToDto()
+                User = userDto
             };
 
             if (result.Success)

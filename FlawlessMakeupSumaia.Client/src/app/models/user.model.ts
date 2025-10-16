@@ -5,6 +5,7 @@ export interface User {
     lastName: string;
     dateCreated: Date;
     fullName: string;
+    roles: string[];
 }
 
 export interface AuthResponse {

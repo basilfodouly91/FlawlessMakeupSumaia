@@ -16,6 +16,8 @@ export interface CartItem {
     productBrand: string;
     quantity: number;
     price: number;
+    productShadeId?: number;
+    productShadeName?: string;
     totalPrice: number;
     dateAdded: Date;
     isInStock: boolean;
@@ -25,6 +27,7 @@ export interface CartItem {
 export interface AddToCart {
     productId: number;
     quantity: number;
+    productShadeId?: number;
 }
 
 export interface UpdateCartItem {

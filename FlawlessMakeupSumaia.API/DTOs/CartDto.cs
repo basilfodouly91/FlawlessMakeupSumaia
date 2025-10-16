@@ -20,6 +20,8 @@ namespace FlawlessMakeupSumaia.API.DTOs
         public string ProductBrand { get; set; } = string.Empty;
         public int Quantity { get; set; }
         public decimal Price { get; set; }
+        public int? ProductShadeId { get; set; }
+        public string? ProductShadeName { get; set; }
         public decimal TotalPrice => Quantity * Price;
         public DateTime DateAdded { get; set; }
         public bool IsInStock { get; set; }
@@ -30,6 +32,7 @@ namespace FlawlessMakeupSumaia.API.DTOs
     {
         public int ProductId { get; set; }
         public int Quantity { get; set; } = 1;
+        public int? ProductShadeId { get; set; }
     }
 
     public class UpdateCartItemDto

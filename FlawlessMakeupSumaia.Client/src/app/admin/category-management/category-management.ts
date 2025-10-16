@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { AdminService } from '../../services/admin.service';
 import { AdminCategory } from '../../models/admin.model';
@@ -25,7 +25,10 @@ export class CategoryManagementComponent implements OnInit, OnDestroy {
   editingCategory: AdminCategory | null = null;
   categoryFormData: any = this.getEmptyCategoryForm();
 
-  constructor(private adminService: AdminService) { }
+  constructor(
+    private adminService: AdminService,
+    private translate: TranslateService
+  ) { }
 
   ngOnInit(): void {
     this.loadCategories();
@@ -38,12 +41,17 @@ export class CategoryManagementComponent implements OnInit, OnDestroy {
 
   private loadCategories(): void {
     this.isLoading = true;
+    const currentLang = this.translate.currentLang || 'ar';
 
     this.adminService.getAllCategoriesForAdmin()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (categories) => {
-          this.categories = categories.sort((a, b) => a.displayOrder - b.displayOrder);
+          // Set the name field based on current language
+          this.categories = categories.map(cat => ({
+            ...cat,
+            name: currentLang === 'ar' ? cat.nameAr : cat.nameEn
+          })).sort((a, b) => a.displayOrder - b.displayOrder);
           this.isLoading = false;
         },
         error: (error) => {
@@ -72,7 +80,8 @@ export class CategoryManagementComponent implements OnInit, OnDestroy {
 
   private getEmptyCategoryForm(): any {
     return {
-      name: '',
+      nameEn: '',
+      nameAr: '',
       description: '',
       imageUrl: '',
       displayOrder: this.categories.length + 1,
@@ -138,5 +147,36 @@ export class CategoryManagementComponent implements OnInit, OnDestroy {
           console.error('Error toggling category status:', error);
         }
       });
+  }
+
+  // Image upload handlers
+  onImageSelect(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image size should be less than 5MB');
+        return;
+      }
+
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64String = reader.result as string;
+        this.categoryFormData.imageUrl = base64String;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  removeImage(): void {
+    this.categoryFormData.imageUrl = '';
   }
 }

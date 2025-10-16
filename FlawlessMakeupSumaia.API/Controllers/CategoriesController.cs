@@ -19,8 +19,17 @@ namespace FlawlessMakeupSumaia.API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategories()
         {
-            var categories = await _categoryService.GetAllCategoriesAsync();
-            return Ok(categories.Select(c => c.ToDto()));
+            try
+            {
+                var categories = await _categoryService.GetAllCategoriesAsync();
+                return Ok(categories.Select(c => c.ToDto()));
+
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (not implemented here)
+                return StatusCode(500, "Internal server error");
+            }   
         }
 
         [HttpGet("{id}")]
@@ -54,7 +63,8 @@ namespace FlawlessMakeupSumaia.API.Controllers
                 return NotFound();
 
             // Update properties
-            existingCategory.Name = dto.Name;
+            existingCategory.NameAr = dto.NameAr;
+            existingCategory.NameEn = dto.NameEn;
             existingCategory.Description = dto.Description;
             existingCategory.ImageUrl = dto.ImageUrl;
             existingCategory.DisplayOrder = dto.DisplayOrder;

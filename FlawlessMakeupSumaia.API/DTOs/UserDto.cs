@@ -8,6 +8,7 @@ namespace FlawlessMakeupSumaia.API.DTOs
         public string LastName { get; set; } = string.Empty;
         public DateTime DateCreated { get; set; }
         public string FullName => $"{FirstName} {LastName}";
+        public List<string> Roles { get; set; } = new List<string>();
     }
 
     public class AuthResponseDto

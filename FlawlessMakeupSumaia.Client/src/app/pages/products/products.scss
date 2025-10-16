@@ -1,0 +1,35 @@
+// Products Page Styles
+
+.border-pink {
+    border-color: var(--light-pink) !important;
+    
+    &:focus {
+        border-color: var(--primary-pink) !important;
+        box-shadow: 0 0 0 0.2rem rgba(255, 105, 180, 0.25);
+    }
+}
+
+.bg-pale-pink {
+    background-color: var(--pale-pink) !important;
+}
+
+.input-group-text {
+    &.border-pink {
+        border-right: none;
+    }
+}
+
+.form-control.border-pink {
+    border-left: none;
+    
+    &:focus {
+        border-left: none;
+    }
+}
+
+// Search results counter
+.search-results {
+    font-size: 0.875rem;
+    color: var(--gray);
+}
+

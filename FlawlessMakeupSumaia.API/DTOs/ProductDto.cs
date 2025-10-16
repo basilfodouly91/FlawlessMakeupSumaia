@@ -22,6 +22,7 @@ namespace FlawlessMakeupSumaia.API.DTOs
         public string? Size { get; set; }
         public string? Ingredients { get; set; }
         public string? SkinType { get; set; }
+        public List<ProductShadeDto> ProductShades { get; set; } = new List<ProductShadeDto>();
         public decimal CurrentPrice => SalePrice ?? Price;
         public bool HasDiscount => SalePrice.HasValue && SalePrice < Price;
         public decimal DiscountPercentage => HasDiscount ? Math.Round((1 - (SalePrice!.Value / Price)) * 100, 0) : 0;
@@ -44,6 +45,7 @@ namespace FlawlessMakeupSumaia.API.DTOs
         public string? Size { get; set; }
         public string? Ingredients { get; set; }
         public string? SkinType { get; set; }
+        public List<CreateProductShadeDto>? ProductShades { get; set; }
     }
 
     public class UpdateProductDto : CreateProductDto

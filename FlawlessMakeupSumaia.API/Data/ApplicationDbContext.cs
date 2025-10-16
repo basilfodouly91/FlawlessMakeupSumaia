@@ -12,6 +12,7 @@ namespace FlawlessMakeupSumaia.API.Data
 
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<ProductShade> ProductShades { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
         public DbSet<Order> Orders { get; set; }
@@ -37,7 +38,17 @@ namespace FlawlessMakeupSumaia.API.Data
             builder.Entity<Category>(entity =>
             {
                 entity.HasKey(c => c.Id);
-                entity.HasIndex(c => c.Name).IsUnique();
+                entity.HasIndex(c => c.NameEn).IsUnique();
+            });
+
+            // ProductShade configuration
+            builder.Entity<ProductShade>(entity =>
+            {
+                entity.HasKey(ps => ps.Id);
+                entity.HasOne(ps => ps.Product)
+                      .WithMany(p => p.ProductShades)
+                      .HasForeignKey(ps => ps.ProductId)
+                      .OnDelete(DeleteBehavior.Cascade);
             });
 
             // Cart configuration
@@ -63,6 +74,10 @@ namespace FlawlessMakeupSumaia.API.Data
                       .WithMany(p => p.CartItems)
                       .HasForeignKey(ci => ci.ProductId)
                       .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(ci => ci.ProductShade)
+                      .WithMany()
+                      .HasForeignKey(ci => ci.ProductShadeId)
+                      .OnDelete(DeleteBehavior.SetNull);
             });
 
             // Order configuration

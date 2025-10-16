@@ -25,8 +25,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   categories: Category[] = [];
   currentUser: User | null = null;
   isLoggedIn = false;
+  isAdmin = false;
   cartItemCount = 0;
   searchTerm = '';
+  currentLang = 'ar';
 
   // UI state
   isMobileMenuOpen = false;
@@ -42,17 +44,29 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ) {
     translate.setDefaultLang('ar');
     translate.use('ar');
+    this.currentLang = translate.currentLang || 'ar';
+    
+    // Subscribe to language changes
+    this.translate.onLangChange.pipe(takeUntil(this.destroy$)).subscribe((event) => {
+      this.currentLang = event.lang;
+    });
   }
 
   ngOnInit(): void {
     // Subscribe to auth state
     this.authService.currentUser$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(user => this.currentUser = user);
+      .subscribe(user => {
+        this.currentUser = user;
+        this.isAdmin = this.authService.isAdmin();
+      });
 
     this.authService.isLoggedIn$
       .pipe(takeUntil(this.destroy$))
-      .subscribe(isLoggedIn => this.isLoggedIn = isLoggedIn);
+      .subscribe(isLoggedIn => {
+        this.isLoggedIn = isLoggedIn;
+        this.isAdmin = this.authService.isAdmin();
+      });
 
     // Subscribe to cart item count
     this.cartService.cartItemCount$
@@ -83,7 +97,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   onSearch(): void {
     if (this.searchTerm.trim()) {
-      this.router.navigate(['/search'], { queryParams: { q: this.searchTerm.trim() } });
+      this.router.navigate(['/products'], { queryParams: { search: this.searchTerm.trim() } });
       this.searchTerm = '';
       this.isMobileMenuOpen = false;
     }
@@ -92,5 +106,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
   logout(): void {
     this.authService.logout();
     this.showUserDropdown = false;
+  }
+
+  getCategoryName(category: Category): string {
+    return this.currentLang === 'ar' ? category.nameAr : category.nameEn;
   }
 }

@@ -1,3 +1,14 @@
+export interface ProductShade {
+    id: number;
+    productId: number;
+    name: string;
+    stockQuantity: number;
+    isActive: boolean;
+    displayOrder: number;
+    dateCreated: Date;
+    dateUpdated: Date;
+}
+
 export interface Product {
     id: number;
     name: string;
@@ -16,12 +27,21 @@ export interface Product {
     dateUpdated: Date;
     brand?: string;
     shade?: string;
+    productShades: ProductShade[];
     size?: string;
     ingredients?: string;
     skinType?: string;
     currentPrice: number;
     hasDiscount: boolean;
     discountPercentage: number;
+}
+
+export interface CreateProductShade {
+    id?: number; // Optional: for existing shades during update
+    name: string;
+    stockQuantity: number;
+    isActive: boolean;
+    displayOrder: number;
 }
 
 export interface CreateProduct {
@@ -37,6 +57,7 @@ export interface CreateProduct {
     isOnSale: boolean;
     brand?: string;
     shade?: string;
+    productShades?: CreateProductShade[];
     size?: string;
     ingredients?: string;
     skinType?: string;

@@ -44,9 +44,9 @@
                 <div class="category-card card h-100 fade-in" [routerLink]="['/category', category.id]"
                     style="cursor: pointer;">
                     <img [src]="category.imageUrl || 'https://picsum.photos/400/300?random=' + category.id"
-                        [alt]="category.name" class="card-img-top">
+                        [alt]="getCategoryName(category)" class="card-img-top">
                     <div class="card-body text-center">
-                        <h5 class="card-title text-pink">{{ category.name }}</h5>
+                        <h5 class="card-title text-pink">{{ getCategoryName(category) }}</h5>
                         <p class="card-text text-muted small">{{ category.description }}</p>
                         <span class="badge bg-light-pink text-dark">{{ category.productCount }} {{ 'HOME.PRODUCTS_COUNT'
                             | translate }}</span>
@@ -105,12 +105,16 @@
                             </span>
                         </div>
 
-                        <button class="btn btn-primary w-100" (click)="addToCart(product)"
+                        <button class="btn btn-primary w-100" (click)="addToCart(product, $event)"
                             [disabled]="product.stockQuantity === 0 || isAddingToCart[product.id]">
-                            <span *ngIf="isAddingToCart[product.id]"
-                                class="spinner-border spinner-border-sm me-2"></span>
-                            {{ product.stockQuantity === 0 ? ('HOME.SOLD_OUT' | translate) : ('HOME.ADD_TO_CART' |
-                            translate) }}
+                            <span *ngIf="!isAddingToCart[product.id]">
+                                {{ product.stockQuantity === 0 ? ('HOME.SOLD_OUT' | translate) :
+                                (product.productShades && product.productShades.length > 0 ? ('HOME.VIEW_DETAILS' | translate) : ('HOME.ADD_TO_CART' | translate)) }}
+                            </span>
+                            <span *ngIf="isAddingToCart[product.id]">
+                                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                {{ 'HOME.ADDING' | translate }}
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -168,12 +172,16 @@
                             </span>
                         </div>
 
-                        <button class="btn btn-primary w-100" (click)="addToCart(product)"
+                        <button class="btn btn-primary w-100" (click)="addToCart(product, $event)"
                             [disabled]="product.stockQuantity === 0 || isAddingToCart[product.id]">
-                            <span *ngIf="isAddingToCart[product.id]"
-                                class="spinner-border spinner-border-sm me-2"></span>
-                            {{ product.stockQuantity === 0 ? ('HOME.SOLD_OUT' | translate) : ('HOME.ADD_TO_CART' |
-                            translate) }}
+                            <span *ngIf="!isAddingToCart[product.id]">
+                                {{ product.stockQuantity === 0 ? ('HOME.SOLD_OUT' | translate) :
+                                (product.productShades && product.productShades.length > 0 ? ('HOME.VIEW_DETAILS' | translate) : ('HOME.ADD_TO_CART' | translate)) }}
+                            </span>
+                            <span *ngIf="isAddingToCart[product.id]">
+                                <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                {{ 'HOME.ADDING' | translate }}
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -212,3 +220,10 @@
         </div>
     </div>
 </section>
+
+<!-- Cart Confirmation Dialog -->
+<app-cart-confirmation 
+    [show]="showCartConfirmation"
+    [data]="cartConfirmationData"
+    (closed)="onCartConfirmationClosed()">
+</app-cart-confirmation>

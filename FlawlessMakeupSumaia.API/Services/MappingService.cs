@@ -18,7 +18,7 @@ namespace FlawlessMakeupSumaia.API.Services
                 ImageUrl = product.ImageUrl,
                 ImageUrls = product.ImageUrls,
                 CategoryId = product.CategoryId,
-                CategoryName = product.Category?.Name ?? string.Empty,
+                CategoryName = product.Category?.NameEn ?? string.Empty,
                 IsActive = product.IsActive,
                 IsFeatured = product.IsFeatured,
                 IsOnSale = product.IsOnSale,
@@ -28,13 +28,14 @@ namespace FlawlessMakeupSumaia.API.Services
                 Shade = product.Shade,
                 Size = product.Size,
                 Ingredients = product.Ingredients,
-                SkinType = product.SkinType
+                SkinType = product.SkinType,
+                ProductShades = product.ProductShades.Select(ps => ps.ToDto()).ToList()
             };
         }
 
         public static Product ToModel(this CreateProductDto dto)
         {
-            return new Product
+            var product = new Product
             {
                 Name = dto.Name,
                 Description = dto.Description,
@@ -52,6 +53,24 @@ namespace FlawlessMakeupSumaia.API.Services
                 Ingredients = dto.Ingredients,
                 SkinType = dto.SkinType
             };
+
+            // Map ProductShades if provided
+            if (dto.ProductShades != null && dto.ProductShades.Count > 0)
+            {
+                product.ProductShades = dto.ProductShades
+                    .Select(shadeDto => new ProductShade
+                    {
+                        Name = shadeDto.Name,
+                        StockQuantity = shadeDto.StockQuantity,
+                        IsActive = shadeDto.IsActive,
+                        DisplayOrder = shadeDto.DisplayOrder,
+                        DateCreated = DateTime.UtcNow,
+                        DateUpdated = DateTime.UtcNow
+                    })
+                    .ToList();
+            }
+
+            return product;
         }
 
         public static CategoryDto ToDto(this Category category)
@@ -59,7 +78,8 @@ namespace FlawlessMakeupSumaia.API.Services
             return new CategoryDto
             {
                 Id = category.Id,
-                Name = category.Name,
+                NameEn = category.NameEn,
+                NameAr = category.NameAr,
                 Description = category.Description,
                 ImageUrl = category.ImageUrl,
                 IsActive = category.IsActive,
@@ -73,10 +93,12 @@ namespace FlawlessMakeupSumaia.API.Services
         {
             return new Category
             {
-                Name = dto.Name,
+                NameEn = dto.NameEn,
+                NameAr = dto.NameAr,
                 Description = dto.Description,
                 ImageUrl = dto.ImageUrl,
-                DisplayOrder = dto.DisplayOrder
+                DisplayOrder = dto.DisplayOrder,
+                IsActive = dto.IsActive
             };
         }
 
@@ -105,9 +127,42 @@ namespace FlawlessMakeupSumaia.API.Services
                 ProductBrand = cartItem.Product?.Brand ?? string.Empty,
                 Quantity = cartItem.Quantity,
                 Price = cartItem.Price,
+                ProductShadeId = cartItem.ProductShadeId,
+                ProductShadeName = cartItem.ProductShade?.Name,
                 DateAdded = cartItem.DateAdded,
-                IsInStock = (cartItem.Product?.StockQuantity ?? 0) >= cartItem.Quantity,
-                StockQuantity = cartItem.Product?.StockQuantity ?? 0
+                IsInStock = cartItem.ProductShadeId.HasValue 
+                    ? (cartItem.ProductShade?.StockQuantity ?? 0) >= cartItem.Quantity
+                    : (cartItem.Product?.StockQuantity ?? 0) >= cartItem.Quantity,
+                StockQuantity = cartItem.ProductShadeId.HasValue
+                    ? (cartItem.ProductShade?.StockQuantity ?? 0)
+                    : (cartItem.Product?.StockQuantity ?? 0)
+            };
+        }
+
+        public static ProductShadeDto ToDto(this ProductShade shade)
+        {
+            return new ProductShadeDto
+            {
+                Id = shade.Id,
+                ProductId = shade.ProductId,
+                Name = shade.Name,
+                StockQuantity = shade.StockQuantity,
+                IsActive = shade.IsActive,
+                DisplayOrder = shade.DisplayOrder,
+                DateCreated = shade.DateCreated,
+                DateUpdated = shade.DateUpdated
+            };
+        }
+
+        public static ProductShade ToModel(this CreateProductShadeDto dto, int productId)
+        {
+            return new ProductShade
+            {
+                ProductId = productId,
+                Name = dto.Name,
+                StockQuantity = dto.StockQuantity,
+                IsActive = dto.IsActive,
+                DisplayOrder = dto.DisplayOrder
             };
         }
 
@@ -173,7 +228,7 @@ namespace FlawlessMakeupSumaia.API.Services
             };
         }
 
-        public static UserDto ToDto(this ApplicationUser user)
+        public static UserDto ToDto(this ApplicationUser user, List<string>? roles = null)
         {
             return new UserDto
             {
@@ -181,7 +236,8 @@ namespace FlawlessMakeupSumaia.API.Services
                 Email = user.Email!,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                DateCreated = user.DateCreated
+                DateCreated = user.DateCreated,
+                Roles = roles ?? new List<string>()
             };
         }
     }

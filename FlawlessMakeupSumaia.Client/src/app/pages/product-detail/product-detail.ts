@@ -9,11 +9,12 @@ import { ProductService } from '../../services/product.service';
 import { CartService } from '../../services/cart.service';
 import { AuthService } from '../../services/auth.service';
 import { Product } from '../../models/product.model';
+import { CartConfirmationComponent, CartConfirmationData } from '../../components/cart-confirmation/cart-confirmation';
 
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, TranslateModule],
+  imports: [CommonModule, RouterModule, FormsModule, TranslateModule, CartConfirmationComponent],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.scss'
 })
@@ -24,6 +25,10 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   isLoading = true;
   quantity = 1;
   isAddingToCart = false;
+  selectedShadeId: number | null = null;
+  
+  showCartConfirmation = false;
+  cartConfirmationData: CartConfirmationData | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -79,27 +84,65 @@ export class ProductDetailComponent implements OnInit, OnDestroy {
   addToCart(): void {
     if (!this.product) return;
 
-    if (!this.authService.isLoggedIn()) {
-      alert('Please log in to add items to cart');
-      return;
+    // Validate shade selection if product has shades
+    if (this.hasShadeOptions() && !this.selectedShadeId) {
+      return; // Button is already disabled, but extra safety check
     }
 
+    // CartService now handles both guest and authenticated users
     this.isAddingToCart = true;
 
     this.cartService.addToCart({
       productId: this.product.id,
-      quantity: this.quantity
+      quantity: this.quantity,
+      productShadeId: this.selectedShadeId || undefined
     }).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
           this.isAddingToCart = false;
-          alert(`${this.product!.name} added to cart!`);
+          
+          let cartCount = 0;
+          this.cartService.cartItemCount$.pipe(takeUntil(this.destroy$)).subscribe(count => {
+            cartCount = count;
+          });
+          
+          this.cartConfirmationData = {
+            productName: this.product!.name,
+            productImage: this.product!.imageUrl,
+            cartItemCount: cartCount
+          };
+          this.showCartConfirmation = true;
+          
+          // Reset selected shade after adding to cart
+          this.selectedShadeId = null;
         },
         error: (error) => {
           console.error('Error adding to cart:', error);
           this.isAddingToCart = false;
-          alert('Error adding to cart. Please try again.');
         }
       });
+  }
+
+  onCartConfirmationClosed(): void {
+    this.showCartConfirmation = false;
+    this.cartConfirmationData = null;
+  }
+
+  getAvailableShades() {
+    if (!this.product?.productShades) return [];
+    return this.product.productShades.filter(s => s.isActive);
+  }
+
+  selectShade(shadeId: number): void {
+    this.selectedShadeId = shadeId;
+  }
+
+  hasShadeOptions(): boolean {
+    return this.getAvailableShades().length > 0;
+  }
+
+  getSelectedShade() {
+    if (!this.selectedShadeId || !this.product) return null;
+    return this.product.productShades.find(s => s.id === this.selectedShadeId);
   }
 }

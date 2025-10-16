@@ -1,0 +1,39 @@
+﻿import { Component, signal, OnInit } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { HeaderComponent } from './components/header/header';
+import { CommonModule } from '@angular/common';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [CommonModule, RouterOutlet, HeaderComponent, TranslateModule],
+  templateUrl: './app.html',
+  styleUrl: './app.scss'
+})
+export class App implements OnInit {
+  protected readonly title = signal('FlawlessMakeupSumaia.Client');
+
+  constructor(private translate: TranslateService) {
+    // Set default language to Arabic
+    translate.setDefaultLang('ar');
+    translate.use('ar').subscribe(() => {
+      console.log('Language set to Arabic');
+      console.log('Current language:', translate.currentLang);
+      console.log('Default language:', translate.getDefaultLang());
+    });
+
+    // Set RTL direction for Arabic
+    document.documentElement.dir = 'rtl';
+    document.documentElement.lang = 'ar';
+    console.log('Document direction:', document.documentElement.dir);
+    console.log('Document language:', document.documentElement.lang);
+  }
+
+  ngOnInit() {
+    // Initialization logic
+    this.translate.get('HOME.TITLE').subscribe((res: string) => {
+      console.log('Translation test:', res);
+    });
+  }
+}

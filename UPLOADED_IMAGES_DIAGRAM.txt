@@ -1,0 +1,159 @@
+================================================================================
+                    WHERE UPLOADED IMAGES ARE SAVED
+================================================================================
+
+STEP 1: You Upload an Image
+┌─────────────────────────────────────┐
+│  Admin Panel                        │
+│  http://localhost:4200/admin/products│
+│                                     │
+│  [Upload Image] → Select: product.jpg│
+│                       (500 KB)      │
+└─────────────────────────────────────┘
+                    │
+                    ▼
+STEP 2: JavaScript Converts to Base64
+┌─────────────────────────────────────┐
+│  FileReader.readAsDataURL()         │
+│                                     │
+│  Converts:                          │
+│  product.jpg (binary)               │
+│  ↓                                  │
+│  "data:image/jpeg;base64,/9j/4..."  │
+│  (text string)                      │
+└─────────────────────────────────────┘
+                    │
+                    ▼
+STEP 3: Sent to API
+┌─────────────────────────────────────┐
+│  HTTP POST to Backend               │
+│  /api/products                      │
+│                                     │
+│  Body: {                            │
+│    imageUrl: "data:image/jpeg;..."  │
+│  }                                  │
+└─────────────────────────────────────┘
+                    │
+                    ▼
+STEP 4: Saved in Database
+┌─────────────────────────────────────┐
+│  SQL Server LocalDB                 │
+│  Database: FlawlessMakeupDB         │
+│                                     │
+│  Products Table:                    │
+│  ┌─────┬──────────┬──────────────┐ │
+│  │ Id  │  Name    │  ImageUrl    │ │
+│  ├─────┼──────────┼──────────────┤ │
+│  │ 1   │ Found..  │ data:image/..│ │
+│  └─────┴──────────┴──────────────┘ │
+│       ^            ^                │
+│       │            │                │
+│    Product      Base64 String      │
+│     Name       (162 KB text)       │
+└─────────────────────────────────────┘
+
+================================================================================
+                         KEY POINTS
+================================================================================
+
+❌ NO physical files saved:
+   ❌ No C:\uploads\product.jpg
+   ❌ No wwwroot\images\product.jpg
+   ❌ No file system storage
+
+✅ YES stored in database:
+   ✅ FlawlessMakeupDB database
+   ✅ Products.ImageUrl column
+   ✅ As Base64 text string
+
+================================================================================
+                    YOUR CURRENT DATA
+================================================================================
+
+Database: FlawlessMakeupDB
+Location: (localdb)\mssqllocaldb
+
+Products Table:
+┌─────┬──────────────────────────┬─────────────────────────┬──────────┐
+│ ID  │ Name                     │ ImageUrl Type           │ Size     │
+├─────┼──────────────────────────┼─────────────────────────┼──────────┤
+│ 1   │ foundation               │ Base64 (UPLOADED)       │ 162 KB   │
+│ 2   │ Anua Serum              │ External URL            │ ~80 char │
+│ 3   │ Babe Lash Serum         │ External URL            │ ~80 char │
+│ ... │ ...                      │ ...                     │ ...      │
+└─────┴──────────────────────────┴─────────────────────────┴──────────┘
+
+Summary:
+  ✓ 1 uploaded image (Base64 in database)
+  ✓ 16 external URL images
+  ✓ 0 images without storage
+
+================================================================================
+                    HOW TO VIEW UPLOADED IMAGES
+================================================================================
+
+Method 1: Visual Studio
+  1. Open Visual Studio
+  2. View → SQL Server Object Explorer
+  3. Expand: (localdb)\MSSQLLocalDB
+  4. Expand: Databases → FlawlessMakeupDB → Tables → Products
+  5. Right-click Products → View Data
+  6. Scroll to ImageUrl column
+  7. You'll see: "data:image/jpeg;base64,/9j/4AAQSk..."
+
+Method 2: SQL Query
+  USE FlawlessMakeupDB;
+  SELECT Id, Name, 
+         LEFT(ImageUrl, 50) AS ImagePreview,
+         LEN(ImageUrl) AS ImageSizeBytes
+  FROM Products
+  WHERE ImageUrl LIKE 'data:image%';
+
+Method 3: API
+  http://localhost:5001/api/products
+  Look for imageUrl field
+
+Method 4: Website
+  http://localhost:4200
+  Images display automatically (browser converts Base64 to image)
+
+================================================================================
+                    COMPARISON CHART
+================================================================================
+
+┌──────────────────────┬─────────────────┬─────────────────────┐
+│ Feature              │ Base64 (Current)│ File Storage        │
+├──────────────────────┼─────────────────┼─────────────────────┤
+│ Where stored?        │ Database        │ File system         │
+│ Physical files?      │ NO              │ YES                 │
+│ Database size        │ Large           │ Small               │
+│ Query speed          │ Slower          │ Faster              │
+│ Easy backup?         │ YES (all in DB) │ NO (need 2 backups) │
+│ Scalability          │ Limited         │ Excellent           │
+│ Good for...          │ Small projects  │ Production apps     │
+└──────────────────────┴─────────────────┴─────────────────────┘
+
+================================================================================
+                         EXAMPLE DATA
+================================================================================
+
+Your "foundation" product in database:
+
+ImageUrl column contains:
+┌────────────────────────────────────────────────────────────────┐
+│ data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAA... │
+│ ...YEBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBw │
+│ ...cHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwc │
+│ ...HBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcH │
+│ ...                                                            │
+│ ... (162 KB of Base64 text) ...                                │
+│ ...                                                            │
+│ ...wcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwcHBwf/9k=               │
+└────────────────────────────────────────────────────────────────┘
+
+This entire text string is stored in one database column!
+
+================================================================================
+
+FOR MORE DETAILS: Read UPLOADED_IMAGES_EXPLAINED.md
+

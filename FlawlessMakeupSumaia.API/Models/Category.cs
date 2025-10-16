@@ -8,7 +8,11 @@ namespace FlawlessMakeupSumaia.API.Models
         
         [Required]
         [StringLength(100)]
-        public string Name { get; set; } = string.Empty;
+        public string NameEn { get; set; } = string.Empty;
+
+        [Required]
+        [StringLength(100)]
+        public string NameAr { get; set; } = string.Empty;
         
         public string Description { get; set; } = string.Empty;
         

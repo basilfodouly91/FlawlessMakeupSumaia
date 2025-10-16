@@ -3,9 +3,9 @@
     <div class="row mb-5" *ngIf="category">
         <div class="col-12">
             <div class="category-header text-center">
-                <img [src]="category.imageUrl" [alt]="category.name" class="img-fluid rounded-3 shadow-lg mb-4"
+                <img [src]="category.imageUrl" [alt]="getCategoryName(category)" class="img-fluid rounded-3 shadow-lg mb-4"
                     style="max-height: 300px; object-fit: cover;">
-                <h1 class="text-pink">{{ category.name }}</h1>
+                <h1 class="text-pink">{{ getCategoryName(category) }}</h1>
                 <p class="lead text-muted">{{ category.description }}</p>
                 <span class="badge bg-light-pink text-dark fs-6">{{ products.length }} {{ 'CATEGORY.PRODUCTS_COUNT' |
                     translate }}</span>
@@ -72,3 +72,10 @@
         </div>
     </div>
 </div>
+
+<!-- Cart Confirmation Dialog -->
+<app-cart-confirmation 
+    [show]="showCartConfirmation"
+    [data]="cartConfirmationData"
+    (closed)="onCartConfirmationClosed()">
+</app-cart-confirmation>

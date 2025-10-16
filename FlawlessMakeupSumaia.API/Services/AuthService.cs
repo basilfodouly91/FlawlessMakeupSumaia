@@ -55,6 +55,9 @@ namespace FlawlessMakeupSumaia.API.Services
                 };
             }
 
+            // Assign "User" role by default
+            await _userManager.AddToRoleAsync(user, "User");
+
             var token = await GenerateJwtTokenAsync(user);
             
             return new AuthResult

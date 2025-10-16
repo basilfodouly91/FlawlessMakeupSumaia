@@ -35,6 +35,10 @@ namespace FlawlessMakeupSumaia.API.Models
         
         public decimal Price { get; set; }
         
+        public int? ProductShadeId { get; set; }
+        
+        public virtual ProductShade? ProductShade { get; set; }
+        
         public DateTime DateAdded { get; set; } = DateTime.UtcNow;
     }
 }

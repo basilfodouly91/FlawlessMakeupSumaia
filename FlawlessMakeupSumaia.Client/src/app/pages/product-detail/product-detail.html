@@ -70,16 +70,33 @@
                     </div>
                 </div>
 
+                <!-- Shade Selector -->
+                <div class="shade-selector mb-4" *ngIf="hasShadeOptions()">
+                    <label class="form-label fw-bold">{{ 'PRODUCT_DETAIL.SHADE' | translate }}</label>
+                    <div class="shade-options d-flex flex-wrap gap-2">
+                        <button 
+                            *ngFor="let shade of getAvailableShades()"
+                            type="button"
+                            class="shade-btn"
+                            [class.selected]="selectedShadeId === shade.id"
+                            [disabled]="shade.stockQuantity === 0"
+                            (click)="selectShade(shade.id)">
+                            {{ shade.name }}
+                            <span class="small d-block" *ngIf="shade.stockQuantity === 0">(Out of Stock)</span>
+                        </button>
+                    </div>
+                    <div class="mt-2 text-muted small" *ngIf="!selectedShadeId">
+                        {{ 'PRODUCT_DETAIL.SELECT_SHADE' | translate }}
+                    </div>
+                </div>
+
                 <!-- Product Details -->
                 <div class="product-specs mb-4">
-                    <div class="row" *ngIf="product.shade || product.size || product.skinType">
-                        <div class="col-md-4" *ngIf="product.shade">
-                            <strong>{{ 'PRODUCT_DETAIL.SHADE' | translate }}:</strong> {{ product.shade }}
-                        </div>
-                        <div class="col-md-4" *ngIf="product.size">
+                    <div class="row" *ngIf="product.size || product.skinType">
+                        <div class="col-md-6" *ngIf="product.size">
                             <strong>{{ 'PRODUCT_DETAIL.SIZE' | translate }}:</strong> {{ product.size }}
                         </div>
-                        <div class="col-md-4" *ngIf="product.skinType">
+                        <div class="col-md-6" *ngIf="product.skinType">
                             <strong>{{ 'PRODUCT_DETAIL.SKIN_TYPE' | translate }}:</strong> {{ product.skinType }}
                         </div>
                     </div>
@@ -104,12 +121,16 @@
                         </div>
                         <div class="col-md-8">
                             <button class="btn btn-primary btn-lg w-100" (click)="addToCart()"
-                                [disabled]="product.stockQuantity === 0 || isAddingToCart">
+                                [disabled]="product.stockQuantity === 0 || isAddingToCart || (hasShadeOptions() && !selectedShadeId)">
                                 <span *ngIf="isAddingToCart" class="spinner-border spinner-border-sm me-2"></span>
                                 <i class="bi bi-bag-plus me-2" *ngIf="!isAddingToCart"></i>
                                 {{ product.stockQuantity === 0 ? ('PRODUCT_DETAIL.SOLD_OUT' | translate) :
                                 ('PRODUCT_DETAIL.ADD_TO_CART' | translate) }}
                             </button>
+                            <div class="text-danger small mt-2" *ngIf="hasShadeOptions() && !selectedShadeId">
+                                <i class="bi bi-exclamation-circle me-1"></i>
+                                {{ 'PRODUCT_DETAIL.PLEASE_SELECT_SHADE' | translate }}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -157,3 +178,10 @@
         <a routerLink="/products" class="btn btn-primary">{{ 'PRODUCT_DETAIL.BROWSE_ALL' | translate }}</a>
     </div>
 </div>
+
+<!-- Cart Confirmation Dialog -->
+<app-cart-confirmation 
+    [show]="showCartConfirmation"
+    [data]="cartConfirmationData"
+    (closed)="onCartConfirmationClosed()">
+</app-cart-confirmation>
