@@ -9,6 +9,7 @@ import { ProductService } from '../../services/product.service';
 import { CategoryService } from '../../services/category.service';
 import { CartService } from '../../services/cart.service';
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/notification.service';
 import { Product } from '../../models/product.model';
 import { Category } from '../../models/category.model';
 import { CartConfirmationComponent, CartConfirmationData } from '../../components/cart-confirmation/cart-confirmation';
@@ -39,6 +40,7 @@ export class CategoryProductsComponent implements OnInit, OnDestroy {
     private categoryService: CategoryService,
     private cartService: CartService,
     private authService: AuthService,
+    private notificationService: NotificationService,
     private translate: TranslateService
   ) {
     this.currentLang = this.translate.currentLang || this.translate.defaultLang || 'en';
@@ -124,7 +126,7 @@ export class CategoryProductsComponent implements OnInit, OnDestroy {
           const errorMsg = this.currentLang === 'ar'
             ? 'حدث خطأ أثناء إضافة المنتج'
             : 'Error adding product';
-          alert(errorMsg);
+          this.notificationService.error(errorMsg);
         }
       });
   }

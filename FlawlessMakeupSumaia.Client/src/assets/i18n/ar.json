@@ -115,7 +115,7 @@
         "CONTINUE_SHOPPING": "متابعة التسوق",
         "ORDER_SUMMARY": "ملخص الطلب",
         "ITEMS": "العناصر",
-        "SHIPPING": "الشحن",
+        "SHIPPING": "التوصيل",
         "FREE": "مجاني",
         "TOTAL": "المجموع",
         "CHECKOUT": "إتمام الشراء",
@@ -138,16 +138,16 @@
         "DELIVERY_NOTES": "ملاحظات التوصيل",
         "PAYMENT_METHOD": "طريقة الدفع",
         "CASH_ON_DELIVERY": "الدفع عند الاستلام",
-        "CLIQ_INFO": "الدفع عبر كليك",
-        "CLIQ_USERNAME": "كليك: BASILFODOULY",
+        "CLIQ_INFO": "الدفع عبر كليك (تحويل بنكي)",
+        "CLIQ_USERNAME": "كليك: SUMAIA1991",
         "COPY_CLIQ": "نسخ كليك",
         "COPIED": "تم النسخ!",
-        "UPLOAD_PAYMENT_PROOF": "تحميل إثبات الدفع (اختياري)",
+        "UPLOAD_PAYMENT_PROOF": "تحميل إثبات الدفع",
         "UPLOAD_PAYMENT_PROOF_HINT": "قم بتحميل لقطة شاشة لتحويل كليك الخاص بك (حد أقصى 5 ميجابايت، JPG/PNG)",
         "PAYMENT_PROOF": "إثبات الدفع",
         "ORDER_SUMMARY": "ملخص الطلب",
         "SUBTOTAL": "المجموع الفرعي",
-        "SHIPPING": "الشحن",
+        "SHIPPING": "التوصيل",
         "TOTAL": "المجموع",
         "PLACE_ORDER": "تأكيد الطلب",
         "PLACING_ORDER": "جاري تأكيد الطلب..."
@@ -175,7 +175,9 @@
         "PENDING": "قيد الانتظار",
         "CONFIRMED": "مؤكد",
         "COMPLETED": "مكتمل",
-        "CANCELLED": "ملغي"
+        "CANCELLED": "ملغي",
+        "NO_ORDERS": "لا توجد طلبات",
+        "CLOSE": "إغلاق"
     },
     "CART_CONFIRMATION": {
         "ITEM_ADDED": "تمت إضافة المنتج إلى سلتك",
@@ -284,6 +286,11 @@
         "SHADE": "الظل",
         "AVAILABLE_SHADES": "درجات اللون المتاحة",
         "AVAILABLE_SHADES_HINT": "أدخل درجات اللون مفصولة بفواصل. اتركه فارغاً إذا لم يكن للمنتج درجات لون.",
+        "ADD_SHADE": "إضافة درجة لون",
+        "MANAGE_SHADES_HINT": "إدارة درجات لون المنتج مع كميات المخزون الفردية",
+        "NO_SHADES_MESSAGE": "لم تتم إضافة أي درجات لون. انقر على \"إضافة درجة لون\" لإضافة درجات لون المنتج، أو اتركه فارغاً إذا لم يكن لهذا المنتج اختلافات في درجات اللون.",
+        "SHADE_NAME": "اسم الدرجة",
+        "STOCK_QUANTITY": "كمية المخزون",
         "SIZE": "الحجم",
         "SKIN_TYPE": "نوع البشرة",
         "INGREDIENTS": "المكونات",
@@ -300,6 +307,11 @@
         "NO_PRODUCTS": "لم يتم العثور على منتجات",
         "NO_CATEGORIES": "لم يتم العثور على فئات",
         "DEBUG_INFO": "معلومات التصحيح"
+    },
+    "ADMIN_DASHBOARD": {
+        "ORDERS": "الطلبات",
+        "ORDERS_DESC": "إدارة طلبات العملاء، تحديث حالة الطلب، وعرض تفاصيل الطلب.",
+        "ORDER_MANAGEMENT": "إدارة الطلبات"
     },
     "USER": {
         "PROFILE": "الملف الشخصي",

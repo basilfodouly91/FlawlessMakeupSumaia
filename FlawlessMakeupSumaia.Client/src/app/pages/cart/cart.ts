@@ -102,11 +102,11 @@ export class CartComponent implements OnInit, OnDestroy {
 
   getTotal(): number {
     if (this.isGuest && this.guestCart) {
-      const shipping = this.guestCart.totalAmount > 50 ? 0 : 5;
+      const shipping = 3;
       return this.guestCart.totalAmount + shipping;
     }
     if (!this.isGuest && this.cart) {
-      const shipping = this.cart.totalAmount > 50 ? 0 : 5;
+      const shipping = 3;
       return this.cart.totalAmount + shipping;
     }
     return 0;

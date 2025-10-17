@@ -9,6 +9,7 @@ import { CartService } from '../../services/cart.service';
 import { OrderService } from '../../services/order.service';
 import { AuthService } from '../../services/auth.service';
 import { GuestCartService } from '../../services/guest-cart.service';
+import { NotificationService } from '../../services/notification.service';
 import { Cart } from '../../models/cart.model';
 import { CreateOrder } from '../../models/order.model';
 
@@ -53,6 +54,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     private orderService: OrderService,
     private authService: AuthService,
     private guestCartService: GuestCartService,
+    private notificationService: NotificationService,
     private router: Router,
     private translate: TranslateService
   ) {
@@ -66,6 +68,11 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.isAuthenticated = this.authService.isLoggedIn();
     this.loadCart();
+    
+    // Auto-populate user information if logged in
+    if (this.isAuthenticated) {
+      this.loadUserInformation();
+    }
   }
 
   ngOnDestroy(): void {
@@ -128,8 +135,20 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     }
   }
 
+  private loadUserInformation(): void {
+    const user = this.authService.getCurrentUser();
+    if (user) {
+      // Auto-populate form with user information
+      this.orderForm.shippingFirstName = user.firstName;
+      this.orderForm.shippingLastName = user.lastName;
+      
+      // Note: User model doesn't have phone, address, city etc.
+      // User will need to fill these in manually
+    }
+  }
+
   copyCliq(): void {
-    navigator.clipboard.writeText('BASILFODOULY').then(() => {
+    navigator.clipboard.writeText('SUMAIA1991').then(() => {
       this.cliqCopied = true;
       setTimeout(() => this.cliqCopied = false, 2000);
     });
@@ -145,7 +164,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         const errorMsg = this.currentLang === 'ar'
           ? 'حجم الصورة يجب أن يكون أقل من 5 ميجابايت'
           : 'Image size must be less than 5MB';
-        alert(errorMsg);
+        this.notificationService.error(errorMsg);
         return;
       }
       
@@ -154,7 +173,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         const errorMsg = this.currentLang === 'ar'
           ? 'يرجى اختيار ملف صورة'
           : 'Please select an image file';
-        alert(errorMsg);
+        this.notificationService.error(errorMsg);
         return;
       }
       
@@ -220,7 +239,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
           const errorMsg = this.currentLang === 'ar'
             ? 'حدث خطأ أثناء تقديم الطلب. يرجى المحاولة مرة أخرى.'
             : 'Error placing order. Please try again.';
-          alert(errorMsg);
+          this.notificationService.error(errorMsg);
         }
       });
   }
@@ -232,7 +251,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
         const errorMsg = this.currentLang === 'ar'
           ? 'الرجاء إدخال البريد الإلكتروني والاسم'
           : 'Please enter email and name';
-        alert(errorMsg);
+        this.notificationService.warning(errorMsg);
         return false;
       }
     }
@@ -244,7 +263,16 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       const errorMsg = this.currentLang === 'ar'
         ? 'الرجاء ملء جميع الحقول المطلوبة'
         : 'Please fill in all required fields';
-      alert(errorMsg);
+      this.notificationService.warning(errorMsg);
+      return false;
+    }
+
+    // Validate payment proof for CliQ Payment
+    if (this.orderForm.paymentMethod === 'CliQ Payment' && !this.orderForm.paymentProofImageUrl) {
+      const errorMsg = this.currentLang === 'ar'
+        ? 'الرجاء تحميل إثبات الدفع عند اختيار الدفع عبر كليك'
+        : 'Please upload payment proof when selecting CliQ Payment';
+      this.notificationService.warning(errorMsg);
       return false;
     }
 

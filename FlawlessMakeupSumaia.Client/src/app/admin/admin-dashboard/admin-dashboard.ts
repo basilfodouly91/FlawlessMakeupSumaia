@@ -5,6 +5,7 @@ import { Subject, takeUntil, forkJoin } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { AdminService } from '../../services/admin.service';
+import { NotificationService } from '../../services/notification.service';
 import { AdminDashboard, ProductAnalytics } from '../../models/admin.model';
 
 @Component({
@@ -21,7 +22,10 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
   analytics: ProductAnalytics | null = null;
   isLoading = true;
 
-  constructor(private adminService: AdminService) { }
+  constructor(
+    private adminService: AdminService,
+    private notificationService: NotificationService
+  ) { }
 
   ngOnInit(): void {
     this.loadDashboardData();
@@ -66,11 +70,11 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     this.adminService.getDashboard().subscribe({
       next: (data) => {
         console.log('API Response:', data);
-        alert(`API Connection Successful!\nTotal Products: ${data.totalProducts}\nTotal Categories: ${data.totalCategories}`);
+        this.notificationService.success(`API Connection Successful!\nTotal Products: ${data.totalProducts}\nTotal Categories: ${data.totalCategories}`);
       },
       error: (error) => {
         console.error('API Connection Failed:', error);
-        alert(`API Connection Failed: ${error.message || 'Unknown error'}`);
+        this.notificationService.error(`API Connection Failed: ${error.message || 'Unknown error'}`);
       }
     });
   }

@@ -9,6 +9,7 @@ import { ProductService } from '../../services/product.service';
 import { CategoryService } from '../../services/category.service';
 import { CartService } from '../../services/cart.service';
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/notification.service';
 import { Product } from '../../models/product.model';
 import { Category } from '../../models/category.model';
 import { CartConfirmationComponent, CartConfirmationData } from '../../components/cart-confirmation/cart-confirmation';
@@ -44,6 +45,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private categoryService: CategoryService,
     private cartService: CartService,
     private authService: AuthService,
+    private notificationService: NotificationService,
     private translate: TranslateService,
     private router: Router
   ) { 
@@ -133,7 +135,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           const errorMsg = this.currentLang === 'ar'
             ? 'حدث خطأ أثناء إضافة المنتج'
             : 'Error adding product';
-          alert(errorMsg);
+          this.notificationService.error(errorMsg);
         }
       });
   }
@@ -147,7 +149,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.newsletterEmail.trim()) {
       // Here you would typically call a newsletter service
       console.log('Newsletter subscription for:', this.newsletterEmail);
-      alert('Thank you for subscribing to our newsletter!');
+      const successMsg = this.currentLang === 'ar'
+        ? 'شكراً لك على الاشتراك في نشرتنا الإخبارية!'
+        : 'Thank you for subscribing to our newsletter!';
+      this.notificationService.success(successMsg);
       this.newsletterEmail = '';
     }
   }

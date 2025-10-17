@@ -67,7 +67,7 @@ export class OrderConfirmationComponent implements OnInit, OnDestroy {
   }
 
   copyCliq(): void {
-    navigator.clipboard.writeText('BASILFODOULY').then(() => {
+    navigator.clipboard.writeText('SUMAIA1991').then(() => {
       this.cliqCopied = true;
       setTimeout(() => this.cliqCopied = false, 2000);
     });

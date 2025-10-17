@@ -5,6 +5,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { AdminService } from '../../services/admin.service';
+import { NotificationService } from '../../services/notification.service';
 import { AdminCategory } from '../../models/admin.model';
 
 @Component({
@@ -19,6 +20,7 @@ export class CategoryManagementComponent implements OnInit, OnDestroy {
 
   categories: AdminCategory[] = [];
   isLoading = true;
+  currentLang = 'en';
 
   // Modal
   showCategoryModal = false;
@@ -27,8 +29,15 @@ export class CategoryManagementComponent implements OnInit, OnDestroy {
 
   constructor(
     private adminService: AdminService,
+    private notificationService: NotificationService,
     private translate: TranslateService
-  ) { }
+  ) {
+    this.currentLang = this.translate.currentLang || this.translate.defaultLang || 'en';
+    
+    this.translate.onLangChange.pipe(takeUntil(this.destroy$)).subscribe((event) => {
+      this.currentLang = event.lang;
+    });
+  }
 
   ngOnInit(): void {
     this.loadCategories();
@@ -118,7 +127,10 @@ export class CategoryManagementComponent implements OnInit, OnDestroy {
   deleteCategory(categoryId: number): void {
     const category = this.categories.find(c => c.id === categoryId);
     if (category && category.productCount > 0) {
-      alert(`Cannot delete category "${category.name}" because it contains ${category.productCount} products. Please move or delete the products first.`);
+      const errorMsg = this.currentLang === 'ar'
+        ? `لا يمكن حذف الفئة "${category.name}" لأنها تحتوي على ${category.productCount} منتجات. الرجاء نقل أو حذف المنتجات أولاً.`
+        : `Cannot delete category "${category.name}" because it contains ${category.productCount} products. Please move or delete the products first.`;
+      this.notificationService.warning(errorMsg);
       return;
     }
 
@@ -157,13 +169,19 @@ export class CategoryManagementComponent implements OnInit, OnDestroy {
       
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        alert('Image size should be less than 5MB');
+        const errorMsg = this.currentLang === 'ar'
+          ? 'حجم الصورة يجب أن يكون أقل من 5 ميجابايت'
+          : 'Image size should be less than 5MB';
+        this.notificationService.error(errorMsg);
         return;
       }
-
+      
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        alert('Please select an image file');
+        const errorMsg = this.currentLang === 'ar'
+          ? 'يرجى اختيار ملف صورة'
+          : 'Please select an image file';
+        this.notificationService.error(errorMsg);
         return;
       }
 

@@ -51,6 +51,32 @@ namespace FlawlessMakeupSumaia.API.Services
 
                 mailMessage.To.Add(adminEmail);
 
+                // Attach payment proof image if available
+                if (!string.IsNullOrEmpty(order.PaymentProofImageUrl) && order.PaymentProofImageUrl.StartsWith("data:image"))
+                {
+                    try
+                    {
+                        // Extract base64 data from data URI
+                        var base64Data = order.PaymentProofImageUrl.Substring(order.PaymentProofImageUrl.IndexOf(",") + 1);
+                        var imageBytes = Convert.FromBase64String(base64Data);
+                        
+                        // Determine file extension from data URI
+                        var extension = "png";
+                        if (order.PaymentProofImageUrl.Contains("image/jpeg") || order.PaymentProofImageUrl.Contains("image/jpg"))
+                            extension = "jpg";
+                        
+                        var stream = new MemoryStream(imageBytes);
+                        var attachment = new Attachment(stream, $"payment-proof-{order.OrderNumber}.{extension}", "image/" + extension);
+                        mailMessage.Attachments.Add(attachment);
+                        
+                        _logger.LogInformation($"Payment proof image attached to email for order {order.OrderNumber}");
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError($"Error attaching payment proof image: {ex.Message}");
+                    }
+                }
+
                 await smtpClient.SendMailAsync(mailMessage);
                 _logger.LogInformation($"Order notification email sent successfully for order {order.OrderNumber}");
             }
@@ -152,14 +178,13 @@ namespace FlawlessMakeupSumaia.API.Services
             sb.AppendLine("<div class='order-info'>");
             sb.AppendLine("<h2>Payment Information</h2>");
             sb.AppendLine($"<p><strong>Payment Method:</strong> {order.PaymentMethod}</p>");
-            sb.AppendLine("<p><strong>CliQ:</strong> BASILFODOULY</p>");
+            sb.AppendLine("<p><strong>CliQ:</strong> SUMAIA1991</p>");
             
-            // Include payment proof image if available
+            // Indicate if payment proof is attached
             if (!string.IsNullOrEmpty(order.PaymentProofImageUrl))
             {
                 sb.AppendLine("<div style='margin-top: 15px;'>");
-                sb.AppendLine("<p><strong>Payment Proof:</strong></p>");
-                sb.AppendLine($"<img src='{order.PaymentProofImageUrl}' alt='Payment Proof' style='max-width: 400px; max-height: 300px; border: 2px solid #ddd; border-radius: 5px;'>");
+                sb.AppendLine("<p><strong>Payment Proof:</strong> See attached image</p>");
                 sb.AppendLine("</div>");
             }
             

@@ -6,6 +6,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { OrderService } from '../../services/order.service';
+import { NotificationService } from '../../services/notification.service';
 import { Order, OrderStatus } from '../../models/order.model';
 
 @Component({
@@ -30,6 +31,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
 
   constructor(
     private orderService: OrderService,
+    private notificationService: NotificationService,
     private translate: TranslateService
   ) {
     this.currentLang = this.translate.currentLang || this.translate.defaultLang || 'en';
@@ -93,7 +95,7 @@ export class OrderManagementComponent implements OnInit, OnDestroy {
           const errorMsg = this.currentLang === 'ar' 
             ? 'حدث خطأ أثناء تحديث حالة الطلب'
             : 'Error updating order status';
-          alert(errorMsg);
+          this.notificationService.error(errorMsg);
         }
       });
   }

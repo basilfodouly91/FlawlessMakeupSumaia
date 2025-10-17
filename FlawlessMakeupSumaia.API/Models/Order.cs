@@ -81,6 +81,10 @@ namespace FlawlessMakeupSumaia.API.Models
         
         public virtual Product Product { get; set; } = null!;
         
+        public int? ProductShadeId { get; set; }
+        
+        public virtual ProductShade? ProductShade { get; set; }
+        
         public int Quantity { get; set; }
         
         public decimal UnitPrice { get; set; }
@@ -90,6 +94,8 @@ namespace FlawlessMakeupSumaia.API.Models
         public string ProductName { get; set; } = string.Empty;
         
         public string ProductImageUrl { get; set; } = string.Empty;
+        
+        public string? ProductShadeName { get; set; }
     }
     
     public enum OrderStatus

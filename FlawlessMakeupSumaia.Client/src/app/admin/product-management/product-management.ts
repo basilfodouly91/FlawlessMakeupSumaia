@@ -6,6 +6,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { AdminService } from '../../services/admin.service';
 import { CategoryService } from '../../services/category.service';
+import { NotificationService } from '../../services/notification.service';
 import { AdminProduct, SaleToggle, StockUpdate, BulkUpdate } from '../../models/admin.model';
 import { Category } from '../../models/category.model';
 import { CreateProduct } from '../../models/product.model';
@@ -55,6 +56,7 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
   constructor(
     private adminService: AdminService,
     private categoryService: CategoryService,
+    private notificationService: NotificationService,
     private translate: TranslateService
   ) {
     this.currentLang = this.translate.currentLang || this.translate.defaultLang || 'en';
@@ -314,7 +316,10 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
 
     // Validate required fields
     if (!this.productForm.name || !this.productForm.price || !this.productForm.categoryId) {
-      alert('Please fill in all required fields (Name, Price, Category)');
+      const errorMsg = this.currentLang === 'ar'
+        ? 'الرجاء ملء جميع الحقول المطلوبة (الاسم، السعر، الفئة)'
+        : 'Please fill in all required fields (Name, Price, Category)';
+      this.notificationService.warning(errorMsg);
       return;
     }
 
@@ -550,13 +555,19 @@ export class ProductManagementComponent implements OnInit, OnDestroy {
       
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        alert('Image size should be less than 5MB');
+        const errorMsg = this.currentLang === 'ar'
+          ? 'حجم الصورة يجب أن يكون أقل من 5 ميجابايت'
+          : 'Image size should be less than 5MB';
+        this.notificationService.error(errorMsg);
         return;
       }
-
+      
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        alert('Please select an image file');
+        const errorMsg = this.currentLang === 'ar'
+          ? 'يرجى اختيار ملف صورة'
+          : 'Please select an image file';
+        this.notificationService.error(errorMsg);
         return;
       }
 

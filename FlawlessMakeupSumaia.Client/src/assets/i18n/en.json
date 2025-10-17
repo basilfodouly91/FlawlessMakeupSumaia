@@ -115,7 +115,7 @@
         "CONTINUE_SHOPPING": "Continue Shopping",
         "ORDER_SUMMARY": "Order Summary",
         "ITEMS": "Items",
-        "SHIPPING": "Shipping",
+        "SHIPPING": "Delivery",
         "FREE": "Free",
         "TOTAL": "Total",
         "CHECKOUT": "Proceed to Checkout",
@@ -138,16 +138,16 @@
         "DELIVERY_NOTES": "Delivery Notes",
         "PAYMENT_METHOD": "Payment Method",
         "CASH_ON_DELIVERY": "Cash on Delivery",
-        "CLIQ_INFO": "CliQ Payment",
-        "CLIQ_USERNAME": "CliQ: BASILFODOULY",
+        "CLIQ_INFO": "CliQ Payment (Bank Transfer)",
+        "CLIQ_USERNAME": "CliQ: SUMAIA1991",
         "COPY_CLIQ": "Copy CliQ",
         "COPIED": "Copied!",
-        "UPLOAD_PAYMENT_PROOF": "Upload Payment Proof (Optional)",
+        "UPLOAD_PAYMENT_PROOF": "Upload Payment Proof",
         "UPLOAD_PAYMENT_PROOF_HINT": "Upload a screenshot of your CliQ payment transfer (Max 5MB, JPG/PNG)",
         "PAYMENT_PROOF": "Payment Proof",
         "ORDER_SUMMARY": "Order Summary",
         "SUBTOTAL": "Subtotal",
-        "SHIPPING": "Shipping",
+        "SHIPPING": "Delivery",
         "TOTAL": "Total",
         "PLACE_ORDER": "Place Order",
         "PLACING_ORDER": "Placing Order..."
@@ -175,7 +175,9 @@
         "PENDING": "Pending",
         "CONFIRMED": "Confirmed",
         "COMPLETED": "Completed",
-        "CANCELLED": "Cancelled"
+        "CANCELLED": "Cancelled",
+        "NO_ORDERS": "No orders found",
+        "CLOSE": "Close"
     },
     "CART_CONFIRMATION": {
         "ITEM_ADDED": "Item added to your cart",
@@ -284,6 +286,11 @@
         "SHADE": "Shade",
         "AVAILABLE_SHADES": "Available Shades",
         "AVAILABLE_SHADES_HINT": "Enter shades separated by commas. Leave empty if product has no shades.",
+        "ADD_SHADE": "Add Shade",
+        "MANAGE_SHADES_HINT": "Manage product shades with individual stock quantities",
+        "NO_SHADES_MESSAGE": "No shades added. Click \"Add Shade\" to add product shades, or leave empty if this product doesn't have shade variations.",
+        "SHADE_NAME": "Shade Name",
+        "STOCK_QUANTITY": "Stock Quantity",
         "SIZE": "Size",
         "SKIN_TYPE": "Skin Type",
         "INGREDIENTS": "Ingredients",
@@ -300,6 +307,11 @@
         "NO_PRODUCTS": "No products found",
         "NO_CATEGORIES": "No categories found",
         "DEBUG_INFO": "Debug Info"
+    },
+    "ADMIN_DASHBOARD": {
+        "ORDERS": "Orders",
+        "ORDERS_DESC": "Manage customer orders, update order status, and view order details.",
+        "ORDER_MANAGEMENT": "Order Management"
     },
     "USER": {
         "PROFILE": "My Profile",

@@ -1,13 +1,14 @@
 import { Component, signal, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from './components/header/header';
+import { NotificationComponent } from './components/notification/notification';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, HeaderComponent, TranslateModule],
+  imports: [CommonModule, RouterOutlet, HeaderComponent, NotificationComponent, TranslateModule],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

@@ -133,12 +133,44 @@ namespace FlawlessMakeupSumaia.API.Services
                 Notes = orderDetails.Notes
             };
 
-            // Create order items from cart items
+            // Create order items from cart items and update stock
             foreach (var cartItem in cartItems)
             {
+                // Load the product with shades to update stock
+                var product = await _context.Products
+                    .Include(p => p.ProductShades)
+                    .FirstOrDefaultAsync(p => p.Id == cartItem.ProductId);
+
+                if (product == null)
+                    throw new ArgumentException($"Product {cartItem.ProductId} not found");
+
+                // Check stock and update
+                if (cartItem.ProductShadeId.HasValue)
+                {
+                    // Product with shade - check and update shade stock
+                    var shade = product.ProductShades.FirstOrDefault(s => s.Id == cartItem.ProductShadeId.Value);
+                    if (shade == null)
+                        throw new ArgumentException($"Product shade {cartItem.ProductShadeId.Value} not found");
+
+                    if (shade.StockQuantity < cartItem.Quantity)
+                        throw new ArgumentException($"Insufficient stock for {product.Name} - {shade.Name}. Available: {shade.StockQuantity}, Requested: {cartItem.Quantity}");
+
+                    shade.StockQuantity -= cartItem.Quantity;
+                }
+                else
+                {
+                    // Product without shade - check and update product stock
+                    if (product.StockQuantity < cartItem.Quantity)
+                        throw new ArgumentException($"Insufficient stock for {product.Name}. Available: {product.StockQuantity}, Requested: {cartItem.Quantity}");
+
+                    product.StockQuantity -= cartItem.Quantity;
+                }
+
                 var orderItem = new OrderItem
                 {
                     ProductId = cartItem.ProductId,
+                    ProductShadeId = cartItem.ProductShadeId,
+                    ProductShadeName = cartItem.ProductShade?.Name,
                     Quantity = cartItem.Quantity,
                     UnitPrice = cartItem.Price,
                     ProductName = cartItem.Product.Name,

@@ -205,6 +205,8 @@ namespace FlawlessMakeupSumaia.API.Services
             {
                 Id = orderItem.Id,
                 ProductId = orderItem.ProductId,
+                ProductShadeId = orderItem.ProductShadeId,
+                ProductShadeName = orderItem.ProductShadeName,
                 Quantity = orderItem.Quantity,
                 UnitPrice = orderItem.UnitPrice,
                 TotalPrice = orderItem.TotalPrice,

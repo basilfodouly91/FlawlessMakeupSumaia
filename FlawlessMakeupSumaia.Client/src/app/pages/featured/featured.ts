@@ -7,6 +7,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ProductService } from '../../services/product.service';
 import { CartService } from '../../services/cart.service';
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/notification.service';
 import { Product } from '../../models/product.model';
 import { CartConfirmationComponent, CartConfirmationData } from '../../components/cart-confirmation/cart-confirmation';
 
@@ -32,6 +33,7 @@ export class FeaturedComponent implements OnInit, OnDestroy {
     private productService: ProductService,
     private cartService: CartService,
     private authService: AuthService,
+    private notificationService: NotificationService,
     private router: Router,
     private translate: TranslateService
   ) { 
@@ -108,7 +110,7 @@ export class FeaturedComponent implements OnInit, OnDestroy {
           const errorMsg = this.currentLang === 'ar'
             ? 'حدث خطأ أثناء إضافة المنتج'
             : 'Error adding product';
-          alert(errorMsg);
+          this.notificationService.error(errorMsg);
         }
       });
   }

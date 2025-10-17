@@ -287,16 +287,16 @@
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <label class="form-label mb-0">{{ 'ADMIN.AVAILABLE_SHADES' | translate }}</label>
                             <button type="button" class="btn btn-sm btn-outline-primary" (click)="addShade()">
-                                <i class="bi bi-plus-circle me-1"></i> Add Shade
+                                <i class="bi bi-plus-circle me-1"></i> {{ 'ADMIN.ADD_SHADE' | translate }}
                             </button>
                         </div>
-                        <div class="form-text mb-2">Manage product shades with individual stock quantities</div>
+                        <div class="form-text mb-2">{{ 'ADMIN.MANAGE_SHADES_HINT' | translate }}</div>
                         
                         <div *ngIf="productForm.productShades && productForm.productShades.length > 0" class="border rounded p-3">
                             <div *ngFor="let shade of productForm.productShades; let i = index" class="shade-item mb-3 pb-3 border-bottom">
                                 <div class="row align-items-center">
                                     <div class="col-md-4">
-                                        <label class="form-label small">Shade Name *</label>
+                                        <label class="form-label small">{{ 'ADMIN.SHADE_NAME' | translate }} *</label>
                                         <input type="text" class="form-control form-control-sm" 
                                             [(ngModel)]="shade.name" 
                                             [name]="'shadeName' + i"
@@ -304,7 +304,7 @@
                                             required>
                                     </div>
                                     <div class="col-md-3">
-                                        <label class="form-label small">Stock Quantity *</label>
+                                        <label class="form-label small">{{ 'ADMIN.STOCK_QUANTITY' | translate }} *</label>
                                         <input type="number" class="form-control form-control-sm" 
                                             [(ngModel)]="shade.stockQuantity"
                                             [name]="'shadeStock' + i"
@@ -312,7 +312,7 @@
                                             required>
                                     </div>
                                     <div class="col-md-2">
-                                        <label class="form-label small">Active</label>
+                                        <label class="form-label small">{{ 'ADMIN.ACTIVE' | translate }}</label>
                                         <div class="form-check">
                                             <input class="form-check-input" type="checkbox" 
                                                 [(ngModel)]="shade.isActive"
@@ -320,7 +320,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-3 text-end">
-                                        <label class="form-label small d-block">Actions</label>
+                                        <label class="form-label small d-block">{{ 'ADMIN.ACTIONS' | translate }}</label>
                                         <div class="btn-group btn-group-sm" role="group">
                                             <button type="button" class="btn btn-outline-secondary" 
                                                 (click)="moveShadeUp(i)"
@@ -347,7 +347,7 @@
                         
                         <div *ngIf="!productForm.productShades || productForm.productShades.length === 0" class="alert alert-info small">
                             <i class="bi bi-info-circle me-2"></i>
-                            No shades added. Click "Add Shade" to add product shades, or leave empty if this product doesn't have shade variations.
+                            {{ 'ADMIN.NO_SHADES_MESSAGE' | translate }}
                         </div>
                     </div>
 
