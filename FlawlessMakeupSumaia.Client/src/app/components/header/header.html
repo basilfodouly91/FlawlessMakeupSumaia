@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+<nav class="navbar navbar-expand-lg navbar-light bg-white">
     <div class="container">
         <!-- Brand -->
         <a class="navbar-brand d-flex align-items-center" routerLink="/">
@@ -17,8 +17,8 @@
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <!-- Navigation -->
-        <div class="collapse navbar-collapse" id="navbarNav" [class.show]="isMobileMenuOpen">
+        <!-- Desktop Navigation -->
+        <div class="collapse navbar-collapse d-none d-lg-block" id="navbarNav">
             <!-- Main Navigation -->
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
@@ -29,17 +29,16 @@
                 </li>
                 <li class="nav-item dropdown" (mouseenter)="showCategoryDropdown = true"
                     (mouseleave)="showCategoryDropdown = false">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" [class.show]="showCategoryDropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" [class.show]="showCategoryDropdown" (click)="$event.preventDefault()">
                         {{ 'HEADER.PRODUCTS' | translate }}
                     </a>
                     <ul class="dropdown-menu" [class.show]="showCategoryDropdown">
-                        <li><a class="dropdown-item" routerLink="/products">{{ 'PRODUCTS.ALL_PRODUCTS' | translate
-                                }}</a></li>
+                        <li><a class="dropdown-item" routerLink="/products" (click)="closeAllDropdowns()">{{ 'PRODUCTS.ALL_PRODUCTS' | translate}}</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
                         <li *ngFor="let category of categories">
-                            <a class="dropdown-item" [routerLink]="['/category', category.id]">
+                            <a class="dropdown-item" [routerLink]="['/category', category.id]" (click)="closeAllDropdowns()">
                                 {{ getCategoryName(category) }}
                             </a>
                         </li>
@@ -59,19 +58,24 @@
                 </li>
             </ul>
 
-            <!-- Search Bar -->
-            <form class="d-flex me-3" (ngSubmit)="onSearch()">
-                <div class="input-group">
-                    <input class="form-control" type="search" [placeholder]="'PRODUCTS.SEARCH' | translate"
-                        [(ngModel)]="searchTerm" name="search">
-                    <button class="btn btn-outline-primary" type="submit">
-                        <i class="bi bi-search"></i>
-                    </button>
-                </div>
-            </form>
-
             <!-- User Actions -->
             <ul class="navbar-nav">
+                <!-- Search -->
+                <li class="nav-item search-container">
+                    <button class="nav-link search-toggle-btn" type="button" (click)="toggleSearch()" *ngIf="!showSearchInput">
+                        <i class="bi bi-search fs-5"></i>
+                    </button>
+                    <form class="search-form" [class.show]="showSearchInput" (ngSubmit)="onSearch()">
+                        <div class="search-wrapper">
+                            <input class="search-input" type="search" [placeholder]="'PRODUCTS.SEARCH' | translate"
+                                [(ngModel)]="searchTerm" name="search">
+                            <button class="search-close-btn" type="button" (click)="toggleSearch()">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </div>
+                    </form>
+                </li>
+
                 <!-- Language Switcher -->
                 <li class="nav-item">
                     <app-language-switcher></app-language-switcher>
@@ -91,32 +95,160 @@
                 <!-- User Menu -->
                 <li class="nav-item dropdown" *ngIf="!isLoggedIn" (mouseenter)="showUserDropdown = true"
                     (mouseleave)="showUserDropdown = false">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" [class.show]="showUserDropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" [class.show]="showUserDropdown" (click)="$event.preventDefault()">
                         <i class="bi bi-person fs-5"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" [class.show]="showUserDropdown">
-                        <li><a class="dropdown-item" routerLink="/login">{{ 'HEADER.LOGIN' | translate }}</a></li>
+                        <li><a class="dropdown-item" routerLink="/login" (click)="closeAllDropdowns()">{{ 'HEADER.LOGIN' | translate }}</a></li>
                     </ul>
                 </li>
 
                 <!-- Logged in user menu -->
                 <li class="nav-item dropdown" *ngIf="isLoggedIn" (mouseenter)="showUserDropdown = true"
                     (mouseleave)="showUserDropdown = false">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" [class.show]="showUserDropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" [class.show]="showUserDropdown" (click)="$event.preventDefault()">
                         <i class="bi bi-person-circle fs-5"></i>
                         <span class="ms-1">{{ currentUser?.firstName }}</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" [class.show]="showUserDropdown">
-                        <li><a class="dropdown-item" routerLink="/profile">{{ 'USER.PROFILE' | translate }}</a></li>
-                        <li><a class="dropdown-item" routerLink="/orders">{{ 'USER.ORDERS' | translate }}</a></li>
+                        <li><a class="dropdown-item" routerLink="/profile" (click)="closeAllDropdowns()">{{ 'USER.PROFILE' | translate }}</a></li>
+                        <li><a class="dropdown-item" routerLink="/orders" (click)="closeAllDropdowns()">{{ 'USER.ORDERS' | translate }}</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item" href="#" (click)="logout()">{{ 'HEADER.LOGOUT' | translate }}</a>
+                        <li><a class="dropdown-item" href="#" (click)="logout(); closeAllDropdowns(); $event.preventDefault()">{{ 'HEADER.LOGOUT' | translate }}</a>
                         </li>
                     </ul>
                 </li>
             </ul>
+        </div>
+
+        <!-- Mobile Sidebar Menu -->
+        <div class="navbar-collapse d-lg-none" [class.show]="isMobileMenuOpen">
+            <!-- Sidebar Header -->
+            <div class="sidebar-header">
+                <div class="brand-info">
+                    <i class="bi bi-heart-fill"></i>
+                    <div class="brand-text">
+                        <div class="fw-bold">Flawless Makeup</div>
+                        <div class="small">Sumaia</div>
+                    </div>
+                </div>
+                <button class="close-btn" (click)="closeMobileMenu()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Search Section -->
+            <div class="mobile-search-section">
+                <form (ngSubmit)="onSearch()">
+                    <input type="search" [placeholder]="'PRODUCTS.SEARCH' | translate" [(ngModel)]="searchTerm" name="search">
+                    <button type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- User Info Section (if logged in) -->
+            <div class="user-info-section" *ngIf="isLoggedIn">
+                <div class="user-avatar">
+                    <i class="bi bi-person-circle"></i>
+                </div>
+                <div class="user-details">
+                    <div class="user-name">{{ currentUser?.firstName }} {{ currentUser?.lastName }}</div>
+                    <div class="user-email">{{ currentUser?.email }}</div>
+                </div>
+            </div>
+
+            <!-- Main Navigation with Icons -->
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" routerLink="/" routerLinkActive="active"
+                        [routerLinkActiveOptions]="{exact: true}" (click)="closeMobileMenu()">
+                        <i class="bi bi-house-fill"></i>
+                        <span>{{ 'HEADER.HOME' | translate }}</span>
+                    </a>
+                </li>
+                <li class="nav-item dropdown" (click)="showCategoryDropdown = !showCategoryDropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" [class.show]="showCategoryDropdown" (click)="$event.preventDefault()">
+                        <i class="bi bi-grid-fill"></i>
+                        <span>{{ 'HEADER.PRODUCTS' | translate }}</span>
+                    </a>
+                    <ul class="dropdown-menu" [class.show]="showCategoryDropdown">
+                        <li><a class="dropdown-item" routerLink="/products" (click)="closeMobileMenu()">{{ 'PRODUCTS.ALL_PRODUCTS' | translate }}</a></li>
+                        <li *ngFor="let category of categories">
+                            <a class="dropdown-item" [routerLink]="['/category', category.id]" (click)="closeMobileMenu()">
+                                {{ getCategoryName(category) }}
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" routerLink="/featured" (click)="closeMobileMenu()">
+                        <i class="bi bi-star-fill"></i>
+                        <span>{{ 'HEADER.FEATURED' | translate }}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" routerLink="/sale" (click)="closeMobileMenu()">
+                        <i class="bi bi-tag-fill"></i>
+                        <span>{{ 'HEADER.SALE' | translate }}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" routerLink="/cart" (click)="closeMobileMenu()">
+                        <i class="bi bi-bag-fill"></i>
+                        <span>{{ 'CART.TITLE' | translate }}</span>
+                        <span class="badge" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- User Actions -->
+            <ul class="navbar-nav">
+                <li class="nav-item" *ngIf="!isLoggedIn">
+                    <a class="nav-link" routerLink="/login" (click)="closeMobileMenu()">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        <span>{{ 'HEADER.LOGIN' | translate }}</span>
+                    </a>
+                </li>
+                <li class="nav-item" *ngIf="isLoggedIn">
+                    <a class="nav-link" routerLink="/profile" (click)="closeMobileMenu()">
+                        <i class="bi bi-person-fill"></i>
+                        <span>{{ 'USER.PROFILE' | translate }}</span>
+                    </a>
+                </li>
+                <li class="nav-item" *ngIf="isLoggedIn">
+                    <a class="nav-link" routerLink="/orders" (click)="closeMobileMenu()">
+                        <i class="bi bi-receipt"></i>
+                        <span>{{ 'USER.ORDERS' | translate }}</span>
+                    </a>
+                </li>
+                <li class="nav-item" *ngIf="isAdmin">
+                    <a class="nav-link" routerLink="/admin" (click)="closeMobileMenu()">
+                        <i class="bi bi-gear-fill"></i>
+                        <span>{{ 'HEADER.ADMIN' | translate }}</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <div class="nav-link">
+                        <i class="bi bi-translate"></i>
+                        <span style="flex: 1;">{{ 'HEADER.LANGUAGE' | translate }}</span>
+                        <app-language-switcher></app-language-switcher>
+                    </div>
+                </li>
+                <li class="nav-item" *ngIf="isLoggedIn">
+                    <a class="nav-link" href="#" (click)="logout(); closeMobileMenu(); $event.preventDefault()">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <span>{{ 'HEADER.LOGOUT' | translate }}</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Menu Footer -->
+            <div class="menu-footer">
+                <p class="footer-text">© 2024 Flawless Makeup Sumaia</p>
+            </div>
         </div>
     </div>
 </nav>

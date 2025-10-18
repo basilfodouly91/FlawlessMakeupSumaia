@@ -1,0 +1,90 @@
+// Mobile specific styles
+@media (max-width: 991px) {
+    .hero-section {
+        padding: 2rem 0 !important;
+
+        .hero-content {
+            padding: 1rem 0;
+            
+            h1 {
+                font-size: 2rem !important;
+                margin-bottom: 1rem !important;
+            }
+
+            .lead {
+                font-size: 1rem !important;
+                margin-bottom: 1.5rem !important;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                gap: 0.75rem !important;
+
+                .btn {
+                    width: 100%;
+                }
+            }
+        }
+
+        .hero-image {
+            margin-top: 1.5rem;
+
+            img {
+                max-height: 300px !important;
+            }
+        }
+    }
+
+    // Categories section
+    .categories-section,
+    .featured-section,
+    .sale-section {
+        padding: 2rem 0 !important;
+
+        .text-center {
+            margin-bottom: 1.5rem !important;
+
+            h2 {
+                font-size: 1.75rem !important;
+            }
+
+            .lead {
+                font-size: 0.95rem !important;
+            }
+        }
+    }
+
+    // Newsletter section
+    .newsletter-section {
+        padding: 2rem 0 !important;
+
+        h3 {
+            font-size: 1.5rem !important;
+        }
+
+        .d-flex {
+            flex-direction: column !important;
+            gap: 0.75rem;
+
+            .form-control {
+                margin-right: 0 !important;
+                margin-left: 0 !important;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    }
+}
+
+// Ensure proper spacing for all sections
+.hero-section,
+.categories-section,
+.featured-section,
+.sale-section,
+.newsletter-section {
+    min-height: auto;
+    overflow-x: hidden;
+}
+

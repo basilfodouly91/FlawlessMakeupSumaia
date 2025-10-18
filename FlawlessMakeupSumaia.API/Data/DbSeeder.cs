@@ -89,7 +89,7 @@ namespace FlawlessMakeupSumaia.API.Data
                     NameEn = "Lash/Brow Care",
                     NameAr = "العناية بالرموش والحواجب",
                     Description = "Enhance your lashes and brows",
-                    ImageUrl = "https://images.unsplash.com/photo-1583001931096-959e6a6a6a1d?w=400",
+                    ImageUrl = "https://images.unsplash.com/photo-1631214524020-7e18db9a8f92?w=400",
                     DisplayOrder = 6,
                     IsActive = true
                 },

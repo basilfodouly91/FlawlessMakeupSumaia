@@ -34,6 +34,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isMobileMenuOpen = false;
   showCategoryDropdown = false;
   showUserDropdown = false;
+  showSearchInput = false;
 
   constructor(
     private authService: AuthService,
@@ -53,6 +54,12 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Ensure all dropdowns are closed on init
+    this.showCategoryDropdown = false;
+    this.showUserDropdown = false;
+    this.showSearchInput = false;
+    this.isMobileMenuOpen = false;
+
     // Subscribe to auth state
     this.authService.currentUser$
       .pipe(takeUntil(this.destroy$))
@@ -95,10 +102,35 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
   }
 
+  closeMobileMenu(): void {
+    this.isMobileMenuOpen = false;
+    this.showCategoryDropdown = false;
+    this.showUserDropdown = false;
+  }
+
+  closeAllDropdowns(): void {
+    this.showCategoryDropdown = false;
+    this.showUserDropdown = false;
+    this.showSearchInput = false;
+  }
+
+  toggleSearch(): void {
+    this.showSearchInput = !this.showSearchInput;
+    if (this.showSearchInput) {
+      setTimeout(() => {
+        const searchInput = document.querySelector('.search-input') as HTMLInputElement;
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }, 100);
+    }
+  }
+
   onSearch(): void {
     if (this.searchTerm.trim()) {
       this.router.navigate(['/products'], { queryParams: { search: this.searchTerm.trim() } });
       this.searchTerm = '';
+      this.showSearchInput = false;
       this.isMobileMenuOpen = false;
     }
   }

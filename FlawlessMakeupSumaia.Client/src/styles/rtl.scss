@@ -119,4 +119,146 @@
             margin-left: 0;
         }
     }
+
+    /* Hero Section */
+    .hero-section {
+        .hero-content {
+            h1,
+            .display-4 {
+                text-align: right;
+            }
+
+            p,
+            .lead {
+                text-align: right;
+            }
+        }
+
+        .hero-buttons {
+            justify-content: flex-start;
+            direction: rtl;
+        }
+    }
+
+    /* Product Cards */
+    .product-card {
+        .sale-badge,
+        .sold-out-badge {
+            right: auto !important;
+            left: 10px;
+        }
+
+        .price-section {
+            direction: rtl;
+            text-align: right;
+
+            .product-sale-price {
+                margin-right: 0 !important;
+                margin-left: 0.5rem !important;
+            }
+
+            .product-price {
+                display: inline-block;
+            }
+        }
+
+        .card-body {
+            text-align: right;
+
+            h6, .card-title {
+                text-align: right;
+                font-weight: 600;
+            }
+
+            .card-text {
+                text-align: right;
+            }
+
+            .btn {
+                font-weight: 600;
+            }
+        }
+
+        .card-img-top {
+            border-radius: 12px 12px 0 0;
+        }
+    }
+
+    /* Category Cards */
+    .category-card {
+        .card-body {
+            text-align: right;
+        }
+    }
+
+    /* Badge spacing */
+    .badge {
+        margin-left: 0.5rem !important;
+        margin-right: 0 !important;
+    }
+
+    /* Button with icons */
+    .btn {
+        i {
+            margin-right: 0 !important;
+            margin-left: 0.5rem;
+        }
+    }
+
+    /* Spinner in buttons */
+    .spinner-border-sm {
+        margin-right: 0 !important;
+        margin-left: 0.5rem !important;
+    }
+
+    /* Newsletter section */
+    .newsletter-section {
+        .d-flex {
+            flex-direction: row-reverse;
+
+            .form-control {
+                margin-right: 0 !important;
+                margin-left: 0.5rem !important;
+            }
+        }
+    }
+
+    /* Price display */
+    .product-price,
+    .product-sale-price {
+        direction: rtl;
+    }
+
+    /* Card alignment */
+    .card-body {
+        h6,
+        .card-title {
+            text-align: right;
+        }
+
+        p,
+        .card-text {
+            text-align: right;
+        }
+    }
+
+    /* Display headings */
+    .display-4,
+    .display-5 {
+        text-align: right;
+    }
+
+    /* Lead text */
+    .lead {
+        text-align: right;
+    }
+
+    /* Text center override for headers */
+    .text-center {
+        h2,
+        h3,
+        p {
+            text-align: center !important;
+        }
+    }
 }
