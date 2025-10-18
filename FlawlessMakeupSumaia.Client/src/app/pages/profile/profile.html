@@ -1,0 +1,80 @@
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Page Title -->
+            <div class="text-center mb-5">
+                <h1 class="text-pink mb-2">{{ 'USER.PROFILE' | translate }}</h1>
+                <p class="text-muted">{{ 'USER.PROFILE_SUBTITLE' | translate }}</p>
+            </div>
+
+            <!-- Loading State -->
+            <div class="text-center py-5" *ngIf="isLoading">
+                <div class="spinner-border spinner-pink" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+
+            <!-- Profile Card -->
+            <div class="card shadow-sm" *ngIf="!isLoading && user">
+                <div class="card-body p-4">
+                    <!-- Profile Header -->
+                    <div class="text-center mb-4 pb-4 border-bottom">
+                        <div class="profile-avatar mb-3">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                        <h3 class="mb-1">{{ user.firstName }} {{ user.lastName }}</h3>
+                        <p class="text-muted mb-2">{{ user.email }}</p>
+                        <span class="badge bg-pink">{{ getUserRole() }}</span>
+                    </div>
+
+                    <!-- Profile Details -->
+                    <div class="profile-details">
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3">
+                                <label class="text-muted small mb-1">{{ 'USER.FIRST_NAME' | translate }}</label>
+                                <p class="h6 mb-0">{{ user.firstName }}</p>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="text-muted small mb-1">{{ 'USER.LAST_NAME' | translate }}</label>
+                                <p class="h6 mb-0">{{ user.lastName }}</p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-12 mb-3">
+                                <label class="text-muted small mb-1">{{ 'USER.EMAIL' | translate }}</label>
+                                <p class="h6 mb-0">{{ user.email }}</p>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-12 mb-3">
+                                <label class="text-muted small mb-1">{{ 'USER.ROLE' | translate }}</label>
+                                <p class="h6 mb-0">{{ getUserRole() }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-2 justify-content-center mt-4 pt-4 border-top">
+                        <a routerLink="/orders" class="btn btn-pink">
+                            <i class="bi bi-receipt me-2"></i>
+                            {{ 'USER.MY_ORDERS' | translate }}
+                        </a>
+                        <a routerLink="/" class="btn btn-outline-secondary">
+                            <i class="bi bi-house me-2"></i>
+                            {{ 'USER.BACK_TO_HOME' | translate }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- No User Found -->
+            <div class="alert alert-warning text-center" *ngIf="!isLoading && !user">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                {{ 'USER.NO_PROFILE' | translate }}
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -315,9 +315,60 @@
     },
     "USER": {
         "PROFILE": "الملف الشخصي",
-        "ORDERS": "الطلبات",
+        "PROFILE_SUBTITLE": "عرض وإدارة معلومات حسابك",
+        "ORDERS": "طلباتي",
+        "MY_ORDERS": "طلباتي",
+        "ORDERS_SUBTITLE": "عرض سجل طلباتك وتتبع التوصيل",
         "SETTINGS": "الإعدادات",
-        "LOGOUT": "تسجيل الخروج"
+        "LOGOUT": "تسجيل الخروج",
+        "ROLE": "الدور",
+        "ROLE_ADMIN": "مدير",
+        "ROLE_CUSTOMER": "عميل",
+        "FIRST_NAME": "الاسم الأول",
+        "LAST_NAME": "اسم العائلة",
+        "EMAIL": "البريد الإلكتروني",
+        "USERNAME": "اسم المستخدم",
+        "PHONE": "رقم الهاتف",
+        "BACK_TO_HOME": "العودة للصفحة الرئيسية",
+        "NO_PROFILE": "تعذر تحميل معلومات الملف الشخصي",
+        "NO_ORDERS": "لا توجد طلبات بعد",
+        "NO_ORDERS_MESSAGE": "لم تقم بتقديم أي طلبات حتى الآن. ابدأ التسوق لرؤية طلباتك هنا.",
+        "START_SHOPPING": "ابدأ التسوق"
+    },
+    "ORDER": {
+        "ORDER_NUMBER": "رقم الطلب",
+        "ORDER_DATE": "تاريخ الطلب",
+        "ITEMS": "المنتجات",
+        "ITEMS_COUNT": "منتج",
+        "TOTAL": "المجموع",
+        "STATUS": "الحالة",
+        "VIEW_DETAILS": "عرض التفاصيل",
+        "ORDER_DETAILS": "تفاصيل الطلب",
+        "CUSTOMER_INFO": "معلومات العميل",
+        "NAME": "الاسم",
+        "EMAIL": "البريد الإلكتروني",
+        "PHONE": "الهاتف",
+        "CITY": "المدينة",
+        "ADDRESS": "العنوان",
+        "ORDER_ITEMS": "منتجات الطلب",
+        "QTY": "الكمية",
+        "PAYMENT_PROOF": "إثبات الدفع",
+        "NOTES": "ملاحظات"
+    },
+    "ORDER_STATUS": {
+        "PENDING": "قيد الانتظار",
+        "CONFIRMED": "مؤكد",
+        "COMPLETED": "مكتمل",
+        "CANCELLED": "ملغى"
+    },
+    "PRODUCT": {
+        "SHADE": "الدرجة"
+    },
+    "CURRENCY": {
+        "JOD": "دينار"
+    },
+    "COMMON": {
+        "CLOSE": "إغلاق"
     },
     "FORM": {
         "NAME": "الاسم",

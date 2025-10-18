@@ -1,0 +1,206 @@
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <!-- Page Title -->
+            <div class="text-center mb-5">
+                <h1 class="text-pink mb-2">{{ 'USER.MY_ORDERS' | translate }}</h1>
+                <p class="text-muted">{{ 'USER.ORDERS_SUBTITLE' | translate }}</p>
+            </div>
+
+            <!-- Loading State -->
+            <div class="text-center py-5" *ngIf="isLoading">
+                <div class="spinner-border spinner-pink" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+
+            <!-- No Orders -->
+            <div class="text-center py-5" *ngIf="!isLoading && orders.length === 0">
+                <i class="bi bi-inbox display-1 text-muted mb-3"></i>
+                <h3 class="text-muted mb-3">{{ 'USER.NO_ORDERS' | translate }}</h3>
+                <p class="mb-4">{{ 'USER.NO_ORDERS_MESSAGE' | translate }}</p>
+                <a routerLink="/products" class="btn btn-pink">
+                    <i class="bi bi-shop me-2"></i>
+                    {{ 'USER.START_SHOPPING' | translate }}
+                </a>
+            </div>
+
+            <!-- Orders List -->
+            <div class="orders-list" *ngIf="!isLoading && orders.length > 0">
+                <div class="card mb-3 order-card" *ngFor="let order of orders">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <!-- Order Number & Date -->
+                            <div class="col-lg-3 mb-3 mb-lg-0">
+                                <h6 class="mb-1">{{ 'ORDER.ORDER_NUMBER' | translate }}</h6>
+                                <p class="mb-1 fw-bold text-pink">{{ order.orderNumber }}</p>
+                                <small class="text-muted">{{ formatDate(order.orderDate) }}</small>
+                            </div>
+
+                            <!-- Items Count -->
+                            <div class="col-lg-2 mb-3 mb-lg-0">
+                                <h6 class="mb-1">{{ 'ORDER.ITEMS' | translate }}</h6>
+                                <p class="mb-0">{{ order.orderItems.length }} {{ 'ORDER.ITEMS_COUNT' | translate }}</p>
+                            </div>
+
+                            <!-- Total Amount -->
+                            <div class="col-lg-2 mb-3 mb-lg-0">
+                                <h6 class="mb-1">{{ 'ORDER.TOTAL' | translate }}</h6>
+                                <p class="mb-0 fw-bold">{{ order.totalAmount | number:'1.2-2' }} {{ 'CURRENCY.JOD' | translate }}</p>
+                            </div>
+
+                            <!-- Status -->
+                            <div class="col-lg-2 mb-3 mb-lg-0">
+                                <h6 class="mb-1">{{ 'ORDER.STATUS' | translate }}</h6>
+                                <span class="badge" [ngClass]="getStatusBadgeClass(order.status)">
+                                    {{ getStatusText(order.status) }}
+                                </span>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="col-lg-3 text-lg-end">
+                                <button class="btn btn-outline-pink btn-sm" (click)="viewOrderDetails(order)">
+                                    <i class="bi bi-eye me-1"></i>
+                                    {{ 'ORDER.VIEW_DETAILS' | translate }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Order Details Modal -->
+<div class="modal fade" [class.show]="showDetailsModal" [style.display]="showDetailsModal ? 'block' : 'none'" 
+     tabindex="-1" *ngIf="selectedOrder">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    {{ 'ORDER.ORDER_DETAILS' | translate }}: {{ selectedOrder.orderNumber }}
+                </h5>
+                <button type="button" class="btn-close" (click)="closeDetailsModal()"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Order Info -->
+                <div class="row mb-4">
+                    <div class="col-md-6 mb-3">
+                        <h6 class="text-muted mb-2">{{ 'ORDER.ORDER_DATE' | translate }}</h6>
+                        <p class="mb-0">{{ formatDate(selectedOrder.orderDate) }}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <h6 class="text-muted mb-2">{{ 'ORDER.STATUS' | translate }}</h6>
+                        <span class="badge" [ngClass]="getStatusBadgeClass(selectedOrder.status)">
+                            {{ getStatusText(selectedOrder.status) }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Customer Info -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">{{ 'ORDER.CUSTOMER_INFO' | translate }}</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-2">
+                                <strong>{{ 'ORDER.NAME' | translate }}:</strong> {{ selectedOrder.customerName }}
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <strong>{{ 'ORDER.EMAIL' | translate }}:</strong> {{ selectedOrder.guestEmail || 'N/A' }}
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <strong>{{ 'ORDER.PHONE' | translate }}:</strong> {{ selectedOrder.shippingPhone }}
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <strong>{{ 'ORDER.CITY' | translate }}:</strong> {{ selectedOrder.shippingCity }}
+                            </div>
+                            <div class="col-12 mb-2">
+                                <strong>{{ 'ORDER.ADDRESS' | translate }}:</strong> {{ selectedOrder.fullShippingAddress }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Items -->
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">{{ 'ORDER.ORDER_ITEMS' | translate }}</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="order-item mb-3 pb-3 border-bottom" *ngFor="let item of selectedOrder.orderItems; last as isLast" 
+                             [class.border-bottom-0]="isLast">
+                            <div class="row align-items-center">
+                                <div class="col-md-2 mb-2 mb-md-0">
+                                    <img [src]="getProductImageUrl(item.productImageUrl)" 
+                                         [alt]="item.productName"
+                                         class="img-fluid rounded">
+                                </div>
+                                <div class="col-md-5 mb-2 mb-md-0">
+                                    <h6 class="mb-1">
+                                        {{ item.productName }}
+                                    </h6>
+                                    <p class="text-muted small mb-0" *ngIf="item.productShadeName">
+                                        {{ 'PRODUCT.SHADE' | translate }}: 
+                                        {{ item.productShadeName }}
+                                    </p>
+                                </div>
+                                <div class="col-md-2 text-center mb-2 mb-md-0">
+                                    <p class="mb-0">{{ 'ORDER.QTY' | translate }}: <strong>{{ item.quantity }}</strong></p>
+                                </div>
+                                <div class="col-md-3 text-end">
+                                    <p class="mb-0 fw-bold">{{ item.totalPrice | number:'1.2-2' }} {{ 'CURRENCY.JOD' | translate }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total -->
+                        <div class="row mt-3">
+                            <div class="col-12 text-end">
+                                <h5 class="mb-0">
+                                    {{ 'ORDER.TOTAL' | translate }}: 
+                                    <span class="text-pink">{{ selectedOrder.totalAmount | number:'1.2-2' }} {{ 'CURRENCY.JOD' | translate }}</span>
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Proof -->
+                <div class="card mt-3" *ngIf="selectedOrder.paymentProofImageUrl">
+                    <div class="card-header">
+                        <h6 class="mb-0">{{ 'ORDER.PAYMENT_PROOF' | translate }}</h6>
+                    </div>
+                    <div class="card-body text-center">
+                        <img [src]="getProductImageUrl(selectedOrder.paymentProofImageUrl)" 
+                             alt="Payment Proof" 
+                             class="img-fluid rounded"
+                             style="max-height: 400px;">
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="card mt-3" *ngIf="selectedOrder.notes">
+                    <div class="card-header">
+                        <h6 class="mb-0">{{ 'ORDER.NOTES' | translate }}</h6>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-0">{{ selectedOrder.notes }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closeDetailsModal()">
+                    {{ 'COMMON.CLOSE' | translate }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Backdrop -->
+<div class="modal-backdrop fade" [class.show]="showDetailsModal" *ngIf="showDetailsModal" 
+     (click)="closeDetailsModal()"></div>
+

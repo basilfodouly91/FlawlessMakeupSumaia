@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { adminGuard } from './guards/admin.guard';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
     { path: '', loadComponent: () => import('./pages/home/home').then(m => m.HomeComponent) },
@@ -12,6 +13,10 @@ export const routes: Routes = [
     { path: 'cart', loadComponent: () => import('./pages/cart/cart').then(m => m.CartComponent) },
     { path: 'checkout', loadComponent: () => import('./pages/checkout/checkout').then(m => m.CheckoutComponent) },
     { path: 'order-confirmation/:orderNumber', loadComponent: () => import('./pages/order-confirmation/order-confirmation').then(m => m.OrderConfirmationComponent) },
+
+    // User Routes - Protected by authGuard
+    { path: 'profile', loadComponent: () => import('./pages/profile/profile').then(m => m.ProfileComponent), canActivate: [authGuard] },
+    { path: 'orders', loadComponent: () => import('./pages/orders/orders').then(m => m.OrdersComponent), canActivate: [authGuard] },
 
     // Admin Routes - Protected by adminGuard
     { path: 'admin', loadComponent: () => import('./admin/admin-dashboard/admin-dashboard').then(m => m.AdminDashboardComponent), canActivate: [adminGuard] },

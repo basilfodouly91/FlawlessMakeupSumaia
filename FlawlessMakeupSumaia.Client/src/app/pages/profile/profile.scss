@@ -1,0 +1,49 @@
+.profile-avatar {
+    i {
+        font-size: 100px;
+        color: var(--primary-pink);
+    }
+}
+
+.card {
+    border: none;
+    border-radius: 12px;
+    
+    .card-body {
+        padding: 2rem;
+    }
+}
+
+.profile-details {
+    label {
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.75rem;
+    }
+}
+
+.spinner-pink {
+    color: var(--primary-pink);
+}
+
+.btn-pink {
+    background-color: var(--primary-pink);
+    border-color: var(--primary-pink);
+    color: white;
+
+    
+    &:hover {
+        background-color: #c2185b;
+        border-color: #c2185b;
+    }
+}
+
+@media (max-width: 768px) {
+    .profile-avatar {
+        i {
+            font-size: 80px;
+        }
+    }
+}
+

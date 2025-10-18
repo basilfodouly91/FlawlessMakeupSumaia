@@ -315,9 +315,60 @@
     },
     "USER": {
         "PROFILE": "My Profile",
+        "PROFILE_SUBTITLE": "View and manage your account information",
         "ORDERS": "My Orders",
+        "MY_ORDERS": "My Orders",
+        "ORDERS_SUBTITLE": "View your order history and track deliveries",
         "SETTINGS": "Settings",
-        "LOGOUT": "Logout"
+        "LOGOUT": "Logout",
+        "ROLE": "Role",
+        "ROLE_ADMIN": "Administrator",
+        "ROLE_CUSTOMER": "Customer",
+        "FIRST_NAME": "First Name",
+        "LAST_NAME": "Last Name",
+        "EMAIL": "Email",
+        "USERNAME": "Username",
+        "PHONE": "Phone Number",
+        "BACK_TO_HOME": "Back to Home",
+        "NO_PROFILE": "Unable to load profile information",
+        "NO_ORDERS": "No Orders Yet",
+        "NO_ORDERS_MESSAGE": "You haven't placed any orders yet. Start shopping to see your orders here.",
+        "START_SHOPPING": "Start Shopping"
+    },
+    "ORDER": {
+        "ORDER_NUMBER": "Order Number",
+        "ORDER_DATE": "Order Date",
+        "ITEMS": "Items",
+        "ITEMS_COUNT": "items",
+        "TOTAL": "Total",
+        "STATUS": "Status",
+        "VIEW_DETAILS": "View Details",
+        "ORDER_DETAILS": "Order Details",
+        "CUSTOMER_INFO": "Customer Information",
+        "NAME": "Name",
+        "EMAIL": "Email",
+        "PHONE": "Phone",
+        "CITY": "City",
+        "ADDRESS": "Address",
+        "ORDER_ITEMS": "Order Items",
+        "QTY": "Qty",
+        "PAYMENT_PROOF": "Payment Proof",
+        "NOTES": "Notes"
+    },
+    "ORDER_STATUS": {
+        "PENDING": "Pending",
+        "CONFIRMED": "Confirmed",
+        "COMPLETED": "Completed",
+        "CANCELLED": "Cancelled"
+    },
+    "PRODUCT": {
+        "SHADE": "Shade"
+    },
+    "CURRENCY": {
+        "JOD": "JOD"
+    },
+    "COMMON": {
+        "CLOSE": "Close"
     },
     "FORM": {
         "NAME": "Name",

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -35,6 +35,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   showCategoryDropdown = false;
   showUserDropdown = false;
   showSearchInput = false;
+  userDropdownClicked = false;
 
   constructor(
     private authService: AuthService,
@@ -112,6 +113,39 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.showCategoryDropdown = false;
     this.showUserDropdown = false;
     this.showSearchInput = false;
+    this.userDropdownClicked = false;
+  }
+
+  toggleUserDropdown(event: Event): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.userDropdownClicked = !this.userDropdownClicked;
+    this.showUserDropdown = this.userDropdownClicked;
+  }
+
+  onUserDropdownMouseEnter(): void {
+    if (!this.userDropdownClicked) {
+      this.showUserDropdown = true;
+    }
+  }
+
+  onUserDropdownMouseLeave(): void {
+    if (!this.userDropdownClicked) {
+      this.showUserDropdown = false;
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: Event): void {
+    // Close dropdown when clicking outside
+    if (this.userDropdownClicked) {
+      const target = event.target as HTMLElement;
+      const dropdown = target.closest('.dropdown');
+      if (!dropdown) {
+        this.showUserDropdown = false;
+        this.userDropdownClicked = false;
+      }
+    }
   }
 
   toggleSearch(): void {

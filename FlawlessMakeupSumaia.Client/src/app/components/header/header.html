@@ -93,9 +93,12 @@
                 </li>
 
                 <!-- User Menu -->
-                <li class="nav-item dropdown" *ngIf="!isLoggedIn" (mouseenter)="showUserDropdown = true"
-                    (mouseleave)="showUserDropdown = false">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" [class.show]="showUserDropdown" (click)="$event.preventDefault()">
+                <li class="nav-item dropdown" *ngIf="!isLoggedIn" 
+                    (mouseenter)="onUserDropdownMouseEnter()"
+                    (mouseleave)="onUserDropdownMouseLeave()">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" 
+                       [class.show]="showUserDropdown" 
+                       (click)="toggleUserDropdown($event)">
                         <i class="bi bi-person fs-5"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" [class.show]="showUserDropdown">
@@ -104,9 +107,12 @@
                 </li>
 
                 <!-- Logged in user menu -->
-                <li class="nav-item dropdown" *ngIf="isLoggedIn" (mouseenter)="showUserDropdown = true"
-                    (mouseleave)="showUserDropdown = false">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" [class.show]="showUserDropdown" (click)="$event.preventDefault()">
+                <li class="nav-item dropdown" *ngIf="isLoggedIn" 
+                    (mouseenter)="onUserDropdownMouseEnter()"
+                    (mouseleave)="onUserDropdownMouseLeave()">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" 
+                       [class.show]="showUserDropdown" 
+                       (click)="toggleUserDropdown($event)">
                         <i class="bi bi-person-circle fs-5"></i>
                         <span class="ms-1">{{ currentUser?.firstName }}</span>
                     </a>

@@ -1,0 +1,142 @@
+.spinner-pink {
+    color: var(--primary-pink);
+}
+
+.text-pink {
+    color: var(--primary-pink);
+}
+
+.btn-pink {
+    background-color: var(--primary-pink);
+    border-color: var(--primary-pink);
+    color: white;
+
+    
+    &:hover {
+        background-color: #c2185b;
+        border-color: #c2185b;
+        color: white;
+    }
+}
+
+.btn-outline-pink {
+    color: var(--primary-pink);
+    border-color: var(--primary-pink);
+    
+    &:hover {
+        background-color: var(--primary-pink);
+        border-color: var(--primary-pink);
+        color: white;
+    }
+}
+
+.order-card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    
+    &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        transform: translateY(-2px);
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+    
+    h6 {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: #666;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+    }
+}
+
+.modal {
+    &.show {
+        display: block;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+    
+    .modal-content {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+    
+    .modal-header {
+        border-bottom: 2px solid #f0f0f0;
+        padding: 1.5rem;
+        
+        .modal-title {
+            color: var(--primary-pink);
+            font-weight: 600;
+        }
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+        
+        .card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            
+            .card-header {
+                background-color: #f8f9fa;
+                border-bottom: 1px solid #e0e0e0;
+                padding: 0.75rem 1rem;
+                
+                h6 {
+                    color: #333;
+                    margin: 0;
+                }
+            }
+            
+            .card-body {
+                padding: 1rem;
+            }
+        }
+        
+        .order-item {
+            img {
+                max-width: 100%;
+                height: auto;
+                object-fit: cover;
+                aspect-ratio: 1;
+            }
+        }
+    }
+    
+    .modal-footer {
+        border-top: 2px solid #f0f0f0;
+        padding: 1rem 1.5rem;
+    }
+}
+
+.modal-backdrop {
+    &.show {
+        opacity: 0.5;
+    }
+}
+
+.badge {
+    padding: 0.4em 0.8em;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+@media (max-width: 991px) {
+    .order-card {
+        .card-body {
+            padding: 1rem;
+        }
+        
+        h6 {
+            font-size: 0.7rem;
+        }
+    }
+}
+
