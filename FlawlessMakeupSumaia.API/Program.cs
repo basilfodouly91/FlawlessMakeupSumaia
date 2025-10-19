@@ -29,6 +29,15 @@ if (string.IsNullOrWhiteSpace(connectionString))
     throw new InvalidOperationException("Connection string is empty or whitespace!");
 }
 
+// Convert PostgreSQL URI to Npgsql connection string format if needed
+if (connectionString.StartsWith("postgres://") || connectionString.StartsWith("postgresql://"))
+{
+    Console.WriteLine("Converting PostgreSQL URI to Npgsql format...");
+    var uri = new Uri(connectionString);
+    connectionString = $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.TrimStart('/')};Username={uri.UserInfo.Split(':')[0]};Password={uri.UserInfo.Split(':')[1]};SSL Mode=Require;Trust Server Certificate=true";
+    Console.WriteLine($"Converted connection string: {connectionString.Substring(0, Math.Min(50, connectionString.Length))}...");
+}
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     Console.WriteLine("Configuring DbContext with connection string");
