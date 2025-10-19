@@ -1,0 +1,16 @@
+**/.git
+**/.gitignore
+**/.vs
+**/.vscode
+**/bin
+**/obj
+**/.dockerignore
+**/Dockerfile
+**/docker-compose.yml
+**/*.md
+**/node_modules
+**/npm-debug.log
+**/dist
+**/.angular
+**/.editorconfig
+
