@@ -107,22 +107,37 @@ using (var scope = app.Services.CreateScope())
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     
-    // Apply migrations automatically
-    await context.Database.MigrateAsync();
-    
-    // Create Admin role if it doesn't exist
-    if (!await roleManager.RoleExistsAsync("Admin"))
+    try
     {
-        await roleManager.CreateAsync(new IdentityRole("Admin"));
+        Console.WriteLine("Starting database migration...");
+        Console.WriteLine($"Connection string from context: {context.Database.GetConnectionString()?.Substring(0, Math.Min(50, context.Database.GetConnectionString()?.Length ?? 0))}...");
+        
+        // Apply migrations automatically
+        await context.Database.MigrateAsync();
+        Console.WriteLine("Database migration completed successfully!");
+        
+        // Create Admin role if it doesn't exist
+        if (!await roleManager.RoleExistsAsync("Admin"))
+        {
+            await roleManager.CreateAsync(new IdentityRole("Admin"));
+        }
+        
+        // Create User role if it doesn't exist
+        if (!await roleManager.RoleExistsAsync("User"))
+        {
+            await roleManager.CreateAsync(new IdentityRole("User"));
+        }
+        
+        await DbSeeder.SeedAsync(context, userManager);
+        Console.WriteLine("Database seeding completed successfully!");
     }
-    
-    // Create User role if it doesn't exist
-    if (!await roleManager.RoleExistsAsync("User"))
+    catch (Exception ex)
     {
-        await roleManager.CreateAsync(new IdentityRole("User"));
+        Console.WriteLine($"Database migration/seeding error: {ex.Message}");
+        Console.WriteLine($"Stack trace: {ex.StackTrace}");
+        Console.WriteLine($"Inner exception: {ex.InnerException?.Message}");
+        throw;
     }
-    
-    await DbSeeder.SeedAsync(context, userManager);
 }
 
 app.Run();
