@@ -15,9 +15,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Add Entity Framework with PostgreSQL
-// Try to get connection string from environment variable first, then fall back to configuration
-var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") 
-    ?? builder.Configuration.GetConnectionString("DefaultConnection");
+// Try multiple sources for connection string (Render uses DATABASE_URL)
+var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL") 
+    ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection") 
+    ?? builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Database connection string not found. Please set DATABASE_URL environment variable.");
+
+Console.WriteLine($"Using connection string: {connectionString.Substring(0, Math.Min(30, connectionString.Length))}..."); // Debug log
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
