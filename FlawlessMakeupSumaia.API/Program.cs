@@ -21,10 +21,19 @@ var connectionString = Environment.GetEnvironmentVariable("DATABASE_URL")
     ?? builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Database connection string not found. Please set DATABASE_URL environment variable.");
 
-Console.WriteLine($"Using connection string: {connectionString.Substring(0, Math.Min(30, connectionString.Length))}..."); // Debug log
+Console.WriteLine($"Connection string length: {connectionString.Length}");
+Console.WriteLine($"Using connection string: {connectionString.Substring(0, Math.Min(50, connectionString.Length))}...");
+
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    throw new InvalidOperationException("Connection string is empty or whitespace!");
+}
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
+{
+    Console.WriteLine("Configuring DbContext with connection string");
+    options.UseNpgsql(connectionString);
+});
 
 // Add Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
