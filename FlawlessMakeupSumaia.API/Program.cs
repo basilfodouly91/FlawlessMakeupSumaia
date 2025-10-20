@@ -34,8 +34,12 @@ if (connectionString.StartsWith("postgres://") || connectionString.StartsWith("p
 {
     Console.WriteLine("Converting PostgreSQL URI to Npgsql format...");
     var uri = new Uri(connectionString);
-    connectionString = $"Host={uri.Host};Port={uri.Port};Database={uri.AbsolutePath.TrimStart('/')};Username={uri.UserInfo.Split(':')[0]};Password={uri.UserInfo.Split(':')[1]};SSL Mode=Require;Trust Server Certificate=true";
-    Console.WriteLine($"Converted connection string: {connectionString.Substring(0, Math.Min(50, connectionString.Length))}...");
+    var port = uri.Port > 0 ? uri.Port : 5432; // Default to 5432 if no port specified
+    var userInfo = uri.UserInfo.Split(':');
+    var username = userInfo[0];
+    var password = userInfo.Length > 1 ? userInfo[1] : "";
+    connectionString = $"Host={uri.Host};Port={port};Database={uri.AbsolutePath.TrimStart('/')};Username={username};Password={password};SSL Mode=Require;Trust Server Certificate=true";
+    Console.WriteLine($"Converted connection string: Host={uri.Host};Port={port};Database={uri.AbsolutePath.TrimStart('/')}...");
 }
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
