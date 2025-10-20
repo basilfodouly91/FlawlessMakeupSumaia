@@ -97,11 +97,9 @@ builder.Services.AddSingleton<IImageService, ImageService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// Enable Swagger in all environments (including production)
+app.UseSwagger();
+app.UseSwaggerUI();
 
 // Apply CORS before any redirects
 app.UseCors("AllowAngular");
