@@ -221,25 +221,51 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (order) => {
+          console.log('Order created successfully:', order);
+          console.log('Order number:', order.orderNumber);
+          
           this.isPlacingOrder = false;
           
-          console.log('Order created:', order);
+          // Show success notification
+          const successMsg = this.currentLang === 'ar'
+            ? 'تم تقديم الطلب بنجاح!'
+            : 'Order placed successfully!';
+          this.notificationService.success(successMsg);
           
           // Clear guest cart if not authenticated
           if (!this.isAuthenticated) {
             this.guestCartService.clearCart();
           }
           
-          // Navigate to order confirmation
-          this.router.navigate(['/order-confirmation', order.orderNumber]);
+          // Small delay before navigation to ensure UI updates
+          setTimeout(() => {
+            this.router.navigate(['/order-confirmation', order.orderNumber])
+              .then((navigated) => {
+                console.log('Navigation result:', navigated);
+                if (!navigated) {
+                  console.error('Navigation failed!');
+                  // Fallback: navigate to home
+                  this.router.navigate(['/']);
+                }
+              })
+              .catch((err) => {
+                console.error('Navigation error:', err);
+                // Fallback: navigate to home
+                this.router.navigate(['/']);
+              });
+          }, 100);
         },
         error: (error) => {
           console.error('Error placing order:', error);
+          console.error('Error details:', JSON.stringify(error));
           this.isPlacingOrder = false;
           const errorMsg = this.currentLang === 'ar'
             ? 'حدث خطأ أثناء تقديم الطلب. يرجى المحاولة مرة أخرى.'
             : 'Error placing order. Please try again.';
           this.notificationService.error(errorMsg);
+        },
+        complete: () => {
+          console.log('Order creation observable completed');
         }
       });
   }
