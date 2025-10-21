@@ -102,9 +102,40 @@ namespace FlawlessMakeupSumaia.API.Services
             }
             else
             {
-                // For guest orders, we expect cart items to be passed through the guest cart service
-                // This is a simplified approach - in production, you might want to handle this differently
-                throw new ArgumentException("Guest checkout requires cart items to be provided");
+                // For guest orders, convert guest cart items to CartItem objects
+                if (orderDetails.OrderItems == null || !orderDetails.OrderItems.Any())
+                    throw new ArgumentException("Guest checkout requires cart items to be provided");
+                
+                // Create temporary CartItem objects from OrderItems for guest checkout
+                cartItems = new List<CartItem>();
+                foreach (var item in orderDetails.OrderItems)
+                {
+                    var product = await _context.Products
+                        .Include(p => p.ProductShades)
+                        .FirstOrDefaultAsync(p => p.Id == item.ProductId);
+                    
+                    if (product == null)
+                        continue;
+                    
+                    var cartItem = new CartItem
+                    {
+                        ProductId = item.ProductId,
+                        Product = product,
+                        ProductShadeId = item.ProductShadeId,
+                        Quantity = item.Quantity,
+                        Price = item.UnitPrice
+                    };
+                    
+                    if (item.ProductShadeId.HasValue)
+                    {
+                        cartItem.ProductShade = product.ProductShades.FirstOrDefault(s => s.Id == item.ProductShadeId.Value);
+                    }
+                    
+                    cartItems.Add(cartItem);
+                }
+                
+                if (!cartItems.Any())
+                    throw new ArgumentException("No valid products found in cart");
             }
 
             var order = new Order

@@ -62,6 +62,9 @@ namespace FlawlessMakeupSumaia.API.DTOs
         public string? GuestEmail { get; set; }
         public string? GuestName { get; set; }
         
+        // Guest cart items (for guest checkout)
+        public List<GuestCartItemDto>? GuestCartItems { get; set; }
+        
         // Shipping Address
         public string ShippingFirstName { get; set; } = string.Empty;
         public string ShippingLastName { get; set; } = string.Empty;
@@ -77,6 +80,14 @@ namespace FlawlessMakeupSumaia.API.DTOs
         public string PaymentMethod { get; set; } = string.Empty;
         public string? PaymentProofImageUrl { get; set; }
         public string Notes { get; set; } = string.Empty;
+    }
+
+    public class GuestCartItemDto
+    {
+        public int ProductId { get; set; }
+        public int? ProductShadeId { get; set; }
+        public int Quantity { get; set; }
+        public decimal Price { get; set; }
     }
 
     public class UpdateOrderStatusDto

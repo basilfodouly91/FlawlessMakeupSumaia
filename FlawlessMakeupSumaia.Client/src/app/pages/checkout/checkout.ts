@@ -211,10 +211,22 @@ export class CheckoutComponent implements OnInit, OnDestroy {
 
     this.isPlacingOrder = true;
 
+    // For guest checkout, add cart items to the order
+    if (!this.isAuthenticated && this.cart) {
+      this.orderForm.guestCartItems = this.cart.cartItems.map(item => ({
+        productId: item.productId,
+        productShadeId: item.productShadeId,
+        quantity: item.quantity,
+        price: item.price
+      }));
+    }
+
     // Debug: Log the order form to verify payment proof is included
     console.log('Placing order with data:', {
       hasPaymentProof: !!this.orderForm.paymentProofImageUrl,
-      paymentProofLength: this.orderForm.paymentProofImageUrl?.length || 0
+      paymentProofLength: this.orderForm.paymentProofImageUrl?.length || 0,
+      hasGuestCartItems: !!this.orderForm.guestCartItems,
+      itemCount: this.orderForm.guestCartItems?.length || 0
     });
 
     this.orderService.createOrderFromCart(this.orderForm)

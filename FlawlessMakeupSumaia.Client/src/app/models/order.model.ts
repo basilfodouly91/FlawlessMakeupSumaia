@@ -44,6 +44,7 @@ export interface OrderItem {
 export interface CreateOrder {
     guestEmail?: string;
     guestName?: string;
+    guestCartItems?: GuestCartItem[];
     shippingFirstName: string;
     shippingLastName: string;
     shippingAddress: string;
@@ -56,6 +57,13 @@ export interface CreateOrder {
     paymentMethod: string;
     paymentProofImageUrl?: string;
     notes: string;
+}
+
+export interface GuestCartItem {
+    productId: number;
+    productShadeId?: number;
+    quantity: number;
+    price: number;
 }
 
 export enum OrderStatus {

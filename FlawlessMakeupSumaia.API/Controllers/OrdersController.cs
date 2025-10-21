@@ -95,18 +95,35 @@ namespace FlawlessMakeupSumaia.API.Controllers
         {
             var userId = GetUserId();
             
-            // Validate: for guest checkout, email and name are required
+            // Validate: for guest checkout, email, name, and cart items are required
             if (string.IsNullOrEmpty(userId))
             {
                 if (string.IsNullOrEmpty(dto.GuestEmail) || string.IsNullOrEmpty(dto.GuestName))
                 {
                     return BadRequest("Guest email and name are required for guest checkout");
                 }
+                
+                if (dto.GuestCartItems == null || !dto.GuestCartItems.Any())
+                {
+                    return BadRequest("Guest checkout requires cart items to be provided");
+                }
             }
             
             try
             {
                 var orderModel = dto.ToModel();
+                
+                // For guest checkout, convert guest cart items to order items
+                if (string.IsNullOrEmpty(userId) && dto.GuestCartItems != null)
+                {
+                    orderModel.OrderItems = dto.GuestCartItems.Select(item => new OrderItem
+                    {
+                        ProductId = item.ProductId,
+                        ProductShadeId = item.ProductShadeId,
+                        Quantity = item.Quantity,
+                        UnitPrice = item.Price
+                    }).ToList();
+                }
                 
                 // Process payment proof image if provided
                 if (!string.IsNullOrEmpty(dto.PaymentProofImageUrl))
