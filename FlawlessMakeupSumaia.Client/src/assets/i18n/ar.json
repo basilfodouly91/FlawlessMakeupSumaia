@@ -129,6 +129,7 @@
         "CUSTOMER_INFO": "معلومات العميل",
         "GUEST_CHECKOUT": "متابعة كزائر",
         "LOGIN_CHECKOUT": "تسجيل الدخول للشراء",
+        "FULL_NAME": "الاسم الكامل",
         "FIRST_NAME": "الاسم الأول",
         "LAST_NAME": "الاسم الأخير",
         "EMAIL": "البريد الإلكتروني",

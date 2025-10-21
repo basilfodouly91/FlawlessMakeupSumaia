@@ -129,6 +129,7 @@
         "CUSTOMER_INFO": "Customer Information",
         "GUEST_CHECKOUT": "Continue as Guest",
         "LOGIN_CHECKOUT": "Login to Checkout",
+        "FULL_NAME": "Full Name",
         "FIRST_NAME": "First Name",
         "LAST_NAME": "Last Name",
         "EMAIL": "Email",

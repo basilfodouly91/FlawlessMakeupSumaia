@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FlawlessMakeupSumaia.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+73299de94ec464561a768ec434bed118d2cea699")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8f51f48986a971085808a882f0d280350074a4db")]
 [assembly: System.Reflection.AssemblyProductAttribute("FlawlessMakeupSumaia.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FlawlessMakeupSumaia.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
