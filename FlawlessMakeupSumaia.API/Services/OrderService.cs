@@ -225,16 +225,19 @@ namespace FlawlessMakeupSumaia.API.Services
                 await _cartService.ClearCartAsync(userId);
             }
 
-            // Send email notification to admin
-            try
+            // Send email notification to admin in the background (fire-and-forget)
+            // This ensures the API responds immediately without waiting for email
+            _ = Task.Run(async () =>
             {
-                await _emailService.SendOrderNotificationToAdminAsync(order);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Failed to send email notification for order {order.OrderNumber}");
-                // Don't fail the order creation if email fails
-            }
+                try
+                {
+                    await _emailService.SendOrderNotificationToAdminAsync(order);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"Failed to send email notification for order {order.OrderNumber}");
+                }
+            });
 
             return await GetOrderByIdAsync(order.Id) ?? order;
         }
