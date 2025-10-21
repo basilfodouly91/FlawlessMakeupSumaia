@@ -28,17 +28,25 @@ namespace FlawlessMakeupSumaia.API.Services
                     return;
                 }
 
-                var smtpHost = _configuration["Email:SmtpHost"];
+                var smtpHost = _configuration["Email:SmtpServer"] ?? _configuration["Email:SmtpHost"];
                 var smtpPort = int.Parse(_configuration["Email:SmtpPort"] ?? "587");
                 var smtpUsername = _configuration["Email:SmtpUsername"];
                 var smtpPassword = _configuration["Email:SmtpPassword"];
                 var fromEmail = _configuration["Email:FromEmail"];
                 var fromName = _configuration["Email:FromName"] ?? "Flawless Makeup Sumaia";
 
+                // Check if SMTP is properly configured
+                if (string.IsNullOrEmpty(smtpHost) || string.IsNullOrEmpty(smtpUsername) || string.IsNullOrEmpty(smtpPassword))
+                {
+                    _logger.LogWarning("SMTP not properly configured. Skipping email notification.");
+                    return;
+                }
+
                 using var smtpClient = new SmtpClient(smtpHost, smtpPort)
                 {
                     EnableSsl = true,
-                    Credentials = new NetworkCredential(smtpUsername, smtpPassword)
+                    Credentials = new NetworkCredential(smtpUsername, smtpPassword),
+                    Timeout = 10000 // 10 seconds timeout
                 };
 
                 var mailMessage = new MailMessage
@@ -51,25 +59,34 @@ namespace FlawlessMakeupSumaia.API.Services
 
                 mailMessage.To.Add(adminEmail);
 
-                // Attach payment proof image if available
+                // Attach payment proof image if available (skip if too large to avoid slow emails)
                 if (!string.IsNullOrEmpty(order.PaymentProofImageUrl) && order.PaymentProofImageUrl.StartsWith("data:image"))
                 {
                     try
                     {
                         // Extract base64 data from data URI
                         var base64Data = order.PaymentProofImageUrl.Substring(order.PaymentProofImageUrl.IndexOf(",") + 1);
-                        var imageBytes = Convert.FromBase64String(base64Data);
                         
-                        // Determine file extension from data URI
-                        var extension = "png";
-                        if (order.PaymentProofImageUrl.Contains("image/jpeg") || order.PaymentProofImageUrl.Contains("image/jpg"))
-                            extension = "jpg";
-                        
-                        var stream = new MemoryStream(imageBytes);
-                        var attachment = new Attachment(stream, $"payment-proof-{order.OrderNumber}.{extension}", "image/" + extension);
-                        mailMessage.Attachments.Add(attachment);
-                        
-                        _logger.LogInformation($"Payment proof image attached to email for order {order.OrderNumber}");
+                        // Skip if Base64 string is larger than 500KB (will be ~650KB as image)
+                        if (base64Data.Length > 500000)
+                        {
+                            _logger.LogWarning($"Payment proof image too large ({base64Data.Length} bytes), skipping attachment for order {order.OrderNumber}");
+                        }
+                        else
+                        {
+                            var imageBytes = Convert.FromBase64String(base64Data);
+                            
+                            // Determine file extension from data URI
+                            var extension = "png";
+                            if (order.PaymentProofImageUrl.Contains("image/jpeg") || order.PaymentProofImageUrl.Contains("image/jpg"))
+                                extension = "jpg";
+                            
+                            var stream = new MemoryStream(imageBytes);
+                            var attachment = new Attachment(stream, $"payment-proof-{order.OrderNumber}.{extension}", "image/" + extension);
+                            mailMessage.Attachments.Add(attachment);
+                            
+                            _logger.LogInformation($"Payment proof image attached to email for order {order.OrderNumber}");
+                        }
                     }
                     catch (Exception ex)
                     {
